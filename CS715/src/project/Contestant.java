@@ -8,15 +8,13 @@ import java.util.Random;
 public class Contestant extends Logger implements Runnable {
 	public static volatile List<Object>		mExamOrder			= Collections.synchronizedList(new ArrayList<Object>());
 	public static volatile List<Contestant>	mContestants		= Collections.synchronizedList(new ArrayList<Contestant>());
-	public static boolean					allExamsHandedOut	= false;
-	public static Boolean					allTested			= false;
 	public static boolean					roundPlay			= true;
 	public static Room						mRoom				= new Room();
 	public static Game						mGame				= new Game();
 
 	private static int						numContestants		= -1;
-	private static int						numRemainingTests	= -1;
 	private static long						examTime			= 5000L;
+
 	private static int						numAnswers			= 0;
 	private static int						numContestantsReady	= 0;
 
@@ -31,7 +29,8 @@ public class Contestant extends Logger implements Runnable {
 		synchronized (mRoom) {
 			if (numContestants == -1) {
 				numContestants = num_contestants;
-				numRemainingTests = numContestants;
+				mRoom.setRoomCapacity(4);
+				mRoom.setTotalExams2Give(num_contestants);
 			}
 		}
 	}
@@ -41,19 +40,15 @@ public class Contestant extends Logger implements Runnable {
 		formGroup();
 		takeExam();
 		waitForResults();
-		// waitForGame();
+		waitForGame();
 		// roundPlay();
 	}
 
 	private void formGroup() {
 		while (true) {
 			synchronized (mRoom) {
-				if (mRoom.areSeatsAvailable()) {
+				if (mRoom.areSeatsAvailable() && !mRoom.examInProgress()) {
 					mRoom.fillSeat();
-					numRemainingTests--;
-					if (numRemainingTests == 0) {
-						allExamsHandedOut = true;
-					}
 					waitForSignal(mRoom, "waiting to take exam");
 					break;
 				}
@@ -68,6 +63,9 @@ public class Contestant extends Logger implements Runnable {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+		synchronized (mRoom) {
+			mRoom.examTaken();
+		}
 	}
 
 	private void waitForResults() {
@@ -77,12 +75,9 @@ public class Contestant extends Logger implements Runnable {
 			mExamOrder.add(convey);
 			mContestants.add(this);
 
-			if (mExamOrder.size() == numContestants) {
-				allTested = true;
-			}
-
 			waitForSignal(convey, "waiting for exam results");
 		}
+
 		if (!mPassedExam) {
 			try {
 				Thread.currentThread().join();
@@ -90,7 +85,6 @@ public class Contestant extends Logger implements Runnable {
 				e.printStackTrace();
 			}
 		}
-
 	}
 
 	private void waitForGame() {

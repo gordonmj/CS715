@@ -17,26 +17,21 @@ public class Announcer extends Logger implements Runnable {
 	@Override
 	public void run() {
 		log(mName + ": executing");
-		while (!Contestant.allExamsHandedOut) {
+		while (true) {
 			synchronized (Contestant.mRoom) {
-				if (!Contestant.mRoom.areSeatsAvailable() || Contestant.allExamsHandedOut) {
+				if (Contestant.mRoom.allTested()) break;
+				if ((!Contestant.mRoom.areSeatsAvailable() || Contestant.mRoom.finalGroup()) && !Contestant.mRoom.examInProgress()) {
 					log(mName + ": group is ready");
 					Logger.print();
 					Contestant.mRoom.notifyAll();
-					Contestant.mRoom.emptyRoom();
+					Contestant.mRoom.setExamInProgress(true);
 				}
-			}
-		}
-
-		while (!Contestant.allTested) {
-			synchronized (Contestant.allTested) {
-				if (Contestant.allTested) break;
 			}
 		}
 
 		List<Integer> scores = gradeExams();
 		announceScores(scores);
-		// startGame();
+		startGame();
 	}
 
 	private List<Integer> gradeExams() {
@@ -84,7 +79,7 @@ public class Announcer extends Logger implements Runnable {
 	}
 
 	private void startGame() {
-		log(mName + ": The game will now start");
+		log(mName + ": print an opening message (something useful, it is up to you)");
 
 		new Thread(new Host()).start();
 
