@@ -6,11 +6,12 @@ import java.util.List;
 import java.util.Random;
 
 public class Contestant extends Logger implements Runnable {
-	public static volatile List<Object>		mExamOrder			= Collections.synchronizedList(new ArrayList<Object>());
 	public static volatile List<Contestant>	mContestants		= Collections.synchronizedList(new ArrayList<Contestant>());
 	public static boolean					roundPlay			= true;
 	public static Room						mRoom				= new Room();
 	public static Game						mGame				= new Game();
+
+	public Object							mConvey				= new Object();
 
 	private static int						numContestants		= -1;
 	private static long						examTime			= 5000L;
@@ -40,7 +41,7 @@ public class Contestant extends Logger implements Runnable {
 		formGroup();
 		takeExam();
 		waitForResults();
-		waitForGame();
+		waitForIntroduction();
 		// roundPlay();
 	}
 
@@ -69,13 +70,10 @@ public class Contestant extends Logger implements Runnable {
 	}
 
 	private void waitForResults() {
-		Object convey = new Object();
-
-		synchronized (convey) {
-			mExamOrder.add(convey);
+		synchronized (mConvey) {
 			mContestants.add(this);
 
-			waitForSignal(convey, "waiting for exam results");
+			waitForSignal(mConvey, "waiting for exam results");
 		}
 
 		if (!mPassedExam) {
@@ -84,15 +82,21 @@ public class Contestant extends Logger implements Runnable {
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
+		} else {
+			mGame.addContestant(this);
 		}
 	}
 
-	private void waitForGame() {
-		synchronized (mGame) {
-			waitForSignal(mGame, "waiting for game to start");
+	private void waitForIntroduction() {
+		synchronized (mConvey) {
+			waitForSignal(mConvey, "waiting for game to start");
 		}
 
 		log(mName + ": " + readyQuotes[new Random().nextInt(readyQuotes.length)]);
+
+		synchronized (Announcer.intro) {
+			Announcer.intro.notify();
+		}
 		Logger.print();
 	}
 

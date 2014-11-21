@@ -10,6 +10,8 @@ public class Announcer extends Logger implements Runnable {
 	private List<Contestant>	mContestants;
 	private String				mName	= "Announcer";
 
+	public static Object		intro	= new Object();
+
 	public Announcer(List<Contestant> contestants) {
 		mContestants = contestants;
 	}
@@ -55,7 +57,7 @@ public class Announcer extends Logger implements Runnable {
 		Collections.reverse(scores);
 		scores = scores.subList(0, 4);
 		int spots = 4;
-		int index = 0;
+
 		for (ListIterator<Contestant> it = Contestant.mContestants.listIterator(); it.hasNext();) {
 			Contestant c = it.next();
 			int cScore = c.getExamScore();
@@ -69,11 +71,9 @@ public class Announcer extends Logger implements Runnable {
 				log(mName + ": " + c.getName() + " has failed the exam");
 				it.remove();
 			}
-			Object convey = Contestant.mExamOrder.get(index);
-			synchronized (convey) {
-				convey.notify();
+			synchronized (c.mConvey) {
+				c.mConvey.notify();
 			}
-			index++;
 		}
 		Logger.print();
 	}
@@ -83,24 +83,49 @@ public class Announcer extends Logger implements Runnable {
 
 		new Thread(new Host()).start();
 
-		for (Contestant c : Contestant.mContestants) {
+		for (Contestant c : Contestant.mGame.getContestants()) {
 			log(mName + ": Welcome " + c.getName() + " to the game.");
-		}
+			synchronized (c.mConvey) {
+				c.mConvey.notify();
+			}
 
-		synchronized (Host.beginGame) {
-			Host.beginGame.notify();
-			Host.gameStarted = true;
+			synchronized (intro) {
+				waitForSignal(intro, null);
+			}
 		}
+		/*
+				synchronized (Host.beginGame) {
+					Host.beginGame.notify();
+					Host.gameStarted = true;
+				}
 
-		synchronized (Contestant.mGame) {
-			Contestant.mGame.notifyAll();
-		}
-
+				synchronized (Contestant.mGame) {
+					Contestant.mGame.notifyAll();
+				}
+		*/
 		Logger.print();
 		try {
 			Thread.currentThread().join();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Must be called within a synchronized block
+	 * 
+	 * @param obj
+	 *            - Object to block on
+	 */
+	private void waitForSignal(Object obj, String comment) {
+		if (comment != null) log(mName + ": " + comment);
+		while (true) {
+			try {
+				obj.wait();
+				break;
+			} catch (InterruptedException e) {
+				continue;
+			}
 		}
 	}
 }

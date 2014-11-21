@@ -1,8 +1,21 @@
 package project;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 public class Game {
-	private int	numRounds		= 2;
-	private int	numQuestions	= 5;
+	private int					numRounds		= 2;
+	private int					numQuestions	= 5;
+	private List<Contestant>	mContestants	= Collections.synchronizedList(new ArrayList<Contestant>());
+
+	public synchronized void addContestant(Contestant c) {
+		mContestants.add(c);
+	}
+
+	public List<Contestant> getContestants() {
+		return mContestants;
+	}
 
 	public int getNumRounds() {
 		return numRounds;

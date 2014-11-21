@@ -15,12 +15,13 @@ public class Host extends Logger implements Runnable {
 
 	@Override
 	public void run() {
-
+		/*
 		synchronized (beginGame) {
 			if (!gameStarted) waitForSignal(beginGame, "waiting for game to begin");
 		}
 
 		roundPlay();
+		*/
 		Logger.print();
 	}
 
@@ -78,7 +79,7 @@ public class Host extends Logger implements Runnable {
 	 *            - Object to block on
 	 */
 	private void waitForSignal(Object obj, String comment) {
-		log(mName + ": " + comment);
+		if (comment != null) log(mName + ": " + comment);
 		while (true) {
 			try {
 				obj.wait();
