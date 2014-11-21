@@ -8,28 +8,46 @@ public class Game {
 	private int					numRounds		= 2;
 	private int					numQuestions	= 5;
 	private List<Contestant>	mContestants	= Collections.synchronizedList(new ArrayList<Contestant>());
+	private boolean				mRoundPlay		= true;
+	private boolean				mGameStarted	= false;
 
 	public synchronized void addContestant(Contestant c) {
 		mContestants.add(c);
 	}
 
-	public List<Contestant> getContestants() {
+	public synchronized List<Contestant> getContestants() {
 		return mContestants;
 	}
 
-	public int getNumRounds() {
+	public synchronized int getNumRounds() {
 		return numRounds;
 	}
 
-	public void setNumRounds(int numRounds) {
+	public synchronized void setNumRounds(int numRounds) {
 		this.numRounds = numRounds;
 	}
 
-	public int getNumQuestions() {
+	public synchronized int getNumQuestions() {
 		return numQuestions;
 	}
 
-	public void setNumQuestions(int numQuestions) {
+	public synchronized void setNumQuestions(int numQuestions) {
 		this.numQuestions = numQuestions;
+	}
+
+	public synchronized boolean inRoundPlay() {
+		return mRoundPlay;
+	}
+
+	public synchronized void setRoundPlay(boolean roundPlay) {
+		mRoundPlay = roundPlay;
+	}
+
+	public synchronized boolean isGameStarted() {
+		return mGameStarted;
+	}
+
+	public synchronized void setGameStarted(boolean gameStarted) {
+		mGameStarted = gameStarted;
 	}
 }

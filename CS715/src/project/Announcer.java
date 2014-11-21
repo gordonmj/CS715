@@ -93,16 +93,12 @@ public class Announcer extends Logger implements Runnable {
 				waitForSignal(intro, null);
 			}
 		}
-		/*
-				synchronized (Host.beginGame) {
-					Host.beginGame.notify();
-					Host.gameStarted = true;
-				}
 
-				synchronized (Contestant.mGame) {
-					Contestant.mGame.notifyAll();
-				}
-		*/
+		synchronized (Contestant.mGame) {
+			Contestant.mGame.setGameStarted(true);
+			Contestant.mGame.notify();
+		}
+
 		Logger.print();
 		try {
 			Thread.currentThread().join();

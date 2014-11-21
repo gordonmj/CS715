@@ -6,23 +6,19 @@ import java.util.List;
 import java.util.Random;
 
 public class Contestant extends Logger implements Runnable {
-	public static volatile List<Contestant>	mContestants		= Collections.synchronizedList(new ArrayList<Contestant>());
-	public static boolean					roundPlay			= true;
-	public static Room						mRoom				= new Room();
-	public static Game						mGame				= new Game();
+	public static volatile List<Contestant>	mContestants	= Collections.synchronizedList(new ArrayList<Contestant>());
+	public static Room						mRoom			= new Room();
+	public static Game						mGame			= new Game();
 
-	public Object							mConvey				= new Object();
+	public Object							mConvey			= new Object();
 
-	private static int						numContestants		= -1;
-	private static long						examTime			= 5000L;
-
-	private static int						numAnswers			= 0;
-	private static int						numContestantsReady	= 0;
+	private static int						numContestants	= -1;
+	private static long						examTime		= 5000L;
 
 	private String							mName;
 	private int								mExamScore;
-	private boolean							mPassedExam			= false;
-	private Integer							mGameScore			= 0;
+	private boolean							mPassedExam		= false;
+	private Integer							mGameScore		= 0;
 
 	public Contestant(String name, int num_contestants) {
 		mName = "Contestant" + name;
@@ -42,7 +38,7 @@ public class Contestant extends Logger implements Runnable {
 		takeExam();
 		waitForResults();
 		waitForIntroduction();
-		// roundPlay();
+		roundPlay();
 	}
 
 	private void formGroup() {
@@ -101,7 +97,7 @@ public class Contestant extends Logger implements Runnable {
 	}
 
 	private void roundPlay() {
-		while (roundPlay) {
+		while (mGame.inRoundPlay()) {
 			waitForQuestion();
 			think();
 			answerQuestion();
@@ -109,38 +105,29 @@ public class Contestant extends Logger implements Runnable {
 	}
 
 	private void waitForQuestion() {
-		synchronized (Host.askQuestion) {
-			numContestantsReady++;
-
-			if (numContestantsReady == 4) {
-				numContestantsReady = 0;
-				Host.askQuestion.notify();
-			}
-		}
-
 		synchronized (Host.question) {
-			if (!Host.questionAsked) waitForSignal(Host.question, "waiting for question");
+			waitForSignal(Host.question, null);
 		}
 	}
 
 	private void think() {
 		log(mName + ": thinking...");
-		synchronized (this) {
-			try {
-				this.wait(new Random().nextInt(4) * 500);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
+		try {
+			Thread.sleep(1500);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
 		}
 	}
 
 	private void answerQuestion() {
 		synchronized (Host.answer) {
-			if (Host.answeredBy == null) {
-				Host.answeredBy = this;
+			Host.answer.incrementAnswers();
+
+			if (Host.answer.getAnsweredBy() == null) Host.answer.setAnsweredBy(this);
+
+			if (Host.answer.everyoneAnswered()) {
+				Host.answer.notify();
 			}
-			numAnswers++;
-			if (numAnswers == 4) Host.answer.notify();
 		}
 	}
 

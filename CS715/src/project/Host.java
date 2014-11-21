@@ -1,27 +1,24 @@
 package project;
 
+import java.util.Random;
+
 public class Host extends Logger implements Runnable {
-	private String				mName			= "Host";
+	private String			mName		= "Host";
 
-	public static Object		beginGame		= new Object();
-	public static Object		answer			= new Object();
-	public static Object		askQuestion		= new Object();
-	public static Object		question		= new Object();
-
-	public static Contestant	answeredBy		= null;
-	public static boolean		answerPossible	= true;
-	public static boolean		gameStarted		= false;
-	public static boolean		questionAsked	= false;
+	public static Answer	answer		= new Answer();
+	public static Object	question	= new Object();
 
 	@Override
 	public void run() {
-		/*
-		synchronized (beginGame) {
-			if (!gameStarted) waitForSignal(beginGame, "waiting for game to begin");
-		}
 
+		if (!Contestant.mGame.isGameStarted()) {
+			synchronized (Contestant.mGame) {
+				if (!Contestant.mGame.isGameStarted()) {
+					waitForSignal(Contestant.mGame, null);
+				}
+			}
+		}
 		roundPlay();
-		*/
 		Logger.print();
 	}
 
@@ -33,43 +30,57 @@ public class Host extends Logger implements Runnable {
 			log(mName + ": Starting Round " + (i + 1));
 
 			for (int j = 0; j < numQuestions; j++) {
-				if (i == (numRounds - 1) && j == (numRounds - 1)) Contestant.roundPlay = false;
-				Logger.print();
-				waitForContestants();
-				Logger.print();
+				if (i == (numRounds - 1) && j == (numQuestions - 1)) {
+					synchronized (Contestant.mGame) {
+						Contestant.mGame.setRoundPlay(false);
+					}
+				}
 				askQuestion(j);
-				Logger.print();
 				waitForAnswer();
-				Logger.print();
 				validateAnswer();
-				Logger.print();
 			}
-		}
-	}
+			log(mName + ": End of Round " + (i + 1));
+			log(mName + ": Here are the scores");
 
-	private void waitForContestants() {
-		synchronized (askQuestion) {
-			waitForSignal(askQuestion, "waiting to ask a question");
+			for (Contestant c : Contestant.mGame.getContestants()) {
+				log(mName + ": " + c.getName() + ": " + c.getGameScore());
+			}
+			Logger.print();
 		}
+		log(mName + ": End of Round Play");
 	}
 
 	private void askQuestion(int questionNum) {
 		log(mName + ": Asking question " + (questionNum + 1));
-		answeredBy = null;
+
 		synchronized (question) {
-			questionAsked = true;
+			answer.newAnswer();
 			question.notifyAll();
 		}
+		Logger.print();
 	}
 
 	private void waitForAnswer() {
-		synchronized (answer) {
-			waitForSignal(answer, "waiting for answer");
+		Logger.print();
+		while (true) {
+			synchronized (answer) {
+				if (answer.getAnsweredBy() == null) {
+					waitForSignal(answer, null);
+				}
+				break;
+			}
 		}
+		Logger.print();
 	}
 
 	private void validateAnswer() {
-
+		Contestant c = answer.getAnsweredBy();
+		int ans = new Random().nextInt(101);
+		boolean right = (ans * answer.getRightPercent()) > 35;
+		log(mName + ": " + c.getName() + " has answered " + correct[right ? 1 : 0]);
+		c.correctAnswer();
+		log(mName + ": " + c.getName() + "'s score is now: " + c.getGameScore());
+		Logger.print();
 	}
 
 	/**
@@ -90,19 +101,5 @@ public class Host extends Logger implements Runnable {
 		}
 	}
 
-	static class Question {
-		private int	contestantsWaiting	= 0;
-
-		public synchronized boolean areContestantsReady() {
-			return this.contestantsWaiting == 4;
-		}
-
-		public synchronized void contestantReady() {
-			this.contestantsWaiting++;
-		}
-
-		public synchronized void reset() {
-			this.contestantsWaiting = 0;
-		}
-	}
+	private static String[]	correct	= { "incorrectly", "correctly" };
 }
