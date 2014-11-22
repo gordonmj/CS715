@@ -6,19 +6,22 @@ import java.util.List;
 import java.util.Random;
 
 public class Contestant extends Logger implements Runnable {
-	public static volatile List<Contestant>	mContestants	= Collections.synchronizedList(new ArrayList<Contestant>());
-	public static Room						mRoom			= new Room();
-	public static Game						mGame			= new Game();
+	public static List<Contestant>	mContestants	= Collections.synchronizedList(new ArrayList<Contestant>());
+	public static Room				mRoom			= new Room();
+	public static Game				mGame			= new Game();
 
-	public Object							mConvey			= new Object();
+	public Object					mConvey			= new Object();
 
-	private static int						numContestants	= -1;
-	private static long						examTime		= 5000L;
+	private static int				numContestants	= -1;
+	private static long				examTime		= 5000L;
 
-	private String							mName;
-	private int								mExamScore;
-	private boolean							mPassedExam		= false;
-	private Integer							mGameScore		= 0;
+	private String					mName;
+	private int						mExamScore;
+	private boolean					mPassedExam		= false;
+	private Integer					mGameScore		= 0;
+	private int						mFinalWager		= -1;
+
+	private boolean					mDismiss		= false;
 
 	public Contestant(String name, int num_contestants) {
 		mName = "Contestant" + name;
@@ -37,8 +40,9 @@ public class Contestant extends Logger implements Runnable {
 		formGroup();
 		takeExam();
 		waitForResults();
-		waitForIntroduction();
-		roundPlay();
+		if (!mDismiss) waitForIntroduction();
+		if (!mDismiss) roundPlay();
+		if (!mDismiss) finalRound();
 	}
 
 	private void formGroup() {
@@ -73,11 +77,7 @@ public class Contestant extends Logger implements Runnable {
 		}
 
 		if (!mPassedExam) {
-			try {
-				Thread.currentThread().join();
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
+			mDismiss = true;
 		} else {
 			mGame.addContestant(this);
 		}
@@ -93,7 +93,6 @@ public class Contestant extends Logger implements Runnable {
 		synchronized (Announcer.intro) {
 			Announcer.intro.notify();
 		}
-		Logger.print();
 	}
 
 	private void roundPlay() {
@@ -101,6 +100,24 @@ public class Contestant extends Logger implements Runnable {
 			waitForQuestion();
 			think();
 			answerQuestion();
+		}
+	}
+
+	private void finalRound() {
+		synchronized (mConvey) {
+			waitForSignal(mConvey, null);
+		}
+
+		if (mGameScore <= 0) {
+			log(mName + ": I did not bring my A game today.  See you next time!");
+			mDismiss = true;
+		}
+
+		mFinalWager = new Random().nextInt(mGameScore + 1);
+		think();
+
+		synchronized (Host.answer) {
+			Host.answer.notify();
 		}
 	}
 
@@ -165,6 +182,22 @@ public class Contestant extends Logger implements Runnable {
 		}
 	}
 
+	public int getFinalWager() {
+		return mFinalWager;
+	}
+
+	public void correctFinalAnswer(int wager) {
+		synchronized (mGameScore) {
+			mGameScore += wager;
+		}
+	}
+
+	public void incorrectFinalAnswer(int wager) {
+		synchronized (mGameScore) {
+			mGameScore -= wager;
+		}
+	}
+
 	/**
 	 * Must be called within a synchronized block
 	 * 
@@ -184,5 +217,5 @@ public class Contestant extends Logger implements Runnable {
 	}
 
 	static String[]	readyQuotes	= { "Ready to play!", "Let's ROCK!", "I already won this game.", "I am awesome!", "Really? I made it?",
-			"Where is my prize money?", "Thank you, thank you", "Let's drop the hammer" };
+			"Where is my prize money?", "Thank you, thank you", "Let's drop the hammer", "I like to parrrr-taaayyy" };
 }

@@ -19,7 +19,8 @@ public class Host extends Logger implements Runnable {
 			}
 		}
 		roundPlay();
-		Logger.print();
+		log(mName + ": It's time for Final Guess What or Who?");
+		finalRound();
 	}
 
 	private void roundPlay() {
@@ -40,12 +41,7 @@ public class Host extends Logger implements Runnable {
 				validateAnswer();
 			}
 			log(mName + ": End of Round " + (i + 1));
-			log(mName + ": Here are the scores");
-
-			for (Contestant c : Contestant.mGame.getContestants()) {
-				log(mName + ": " + c.getName() + ": " + c.getGameScore());
-			}
-			Logger.print();
+			printScores();
 		}
 		log(mName + ": End of Round Play");
 	}
@@ -57,11 +53,9 @@ public class Host extends Logger implements Runnable {
 			answer.newAnswer();
 			question.notifyAll();
 		}
-		Logger.print();
 	}
 
 	private void waitForAnswer() {
-		Logger.print();
 		while (true) {
 			synchronized (answer) {
 				if (answer.getAnsweredBy() == null) {
@@ -70,7 +64,6 @@ public class Host extends Logger implements Runnable {
 				break;
 			}
 		}
-		Logger.print();
 	}
 
 	private void validateAnswer() {
@@ -80,7 +73,47 @@ public class Host extends Logger implements Runnable {
 		log(mName + ": " + c.getName() + " has answered " + correct[right ? 1 : 0]);
 		c.correctAnswer();
 		log(mName + ": " + c.getName() + "'s score is now: " + c.getGameScore());
-		Logger.print();
+	}
+
+	private void finalRound() {
+		for (Contestant c : Contestant.mGame.getContestants()) {
+			log(mName + ": asking " + c.getName() + " the final question");
+			synchronized (c.mConvey) {
+				c.mConvey.notify();
+			}
+
+			synchronized (answer) {
+				if (c.getFinalWager() == -1) waitForSignal(answer, null);
+			}
+		}
+
+		Contestant top = null;
+		for (Contestant c : Contestant.mGame.getContestants()) {
+			if (c.getGameScore() <= 0) continue;
+			if (top == null) top = c;
+
+			boolean right = new Random().nextInt(101) > 50;
+
+			if (right) {
+				c.correctFinalAnswer(c.getFinalWager());
+				if (c.getGameScore() > top.getGameScore()) top = c;
+			} else {
+				c.incorrectFinalAnswer(c.getFinalWager());
+				if (c.getGameScore() > top.getGameScore()) top = c;
+			}
+		}
+
+		printScores();
+		log(mName + ": And the winner is...");
+		log(mName + ": " + top.getName() + " with a score of " + top.getGameScore());
+		log(mName + ": Thank you and drive home safely!");
+	}
+
+	private void printScores() {
+		log(mName + ": Here are the scores");
+		for (Contestant c : Contestant.mGame.getContestants()) {
+			log(mName + ": " + c.getName() + ": " + c.getGameScore());
+		}
 	}
 
 	/**
