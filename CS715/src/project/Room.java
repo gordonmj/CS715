@@ -54,6 +54,12 @@ public class Room {
 		return mNumExamsTaken == mTotalExams2Give;
 	}
 
+	/**
+	 * The number of test takers do not always fit perfectly into a room, leaving the last few people to take the exam waiting forever since the exam
+	 * room does not fill to capacity. To prevent this from happening, check if the test takers are the final group and give exam.
+	 * 
+	 * @return whether this is the final testing group or not.
+	 */
 	public synchronized boolean finalGroup() {
 		int seatsFilled = mRoomCapacity - mSeatsAvailable;
 		return mTotalExams2Give - (mNumExamsTaken + seatsFilled) == 0;

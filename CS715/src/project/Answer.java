@@ -31,6 +31,10 @@ public class Answer {
 		return mRightPercent;
 	}
 
+	public synchronized void setRightPercent(double rightPercent) {
+		mRightPercent = rightPercent;
+	}
+
 	public synchronized boolean everyoneAnswered() {
 		return mNumAnswers == 4;
 	}

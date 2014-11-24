@@ -8,9 +8,19 @@ public class Host extends Logger implements Runnable {
 	public static Answer	answer		= new Answer();
 	public static Object	question	= new Object();
 
+	public Host(double rightPercent) {
+		answer.setRightPercent(rightPercent);
+	}
+
 	@Override
 	public void run() {
+		waitForGame2Start();
+		roundPlay();
+		log(mName + ": It's time for Final Guess What or Who?");
+		finalRound();
+	}
 
+	private void waitForGame2Start() {
 		if (!Contestant.mGame.isGameStarted()) {
 			synchronized (Contestant.mGame) {
 				if (!Contestant.mGame.isGameStarted()) {
@@ -18,9 +28,6 @@ public class Host extends Logger implements Runnable {
 				}
 			}
 		}
-		roundPlay();
-		log(mName + ": It's time for Final Guess What or Who?");
-		finalRound();
 	}
 
 	private void roundPlay() {
@@ -77,7 +84,7 @@ public class Host extends Logger implements Runnable {
 
 	private void finalRound() {
 		for (Contestant c : Contestant.mGame.getContestants()) {
-			log(mName + ": asking " + c.getName() + " the final question");
+			log(mName + ": Asking " + c.getName() + " the final question");
 			synchronized (c.mConvey) {
 				c.mConvey.notify();
 			}

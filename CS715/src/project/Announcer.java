@@ -7,18 +7,30 @@ import java.util.ListIterator;
 import java.util.Random;
 
 public class Announcer extends Logger implements Runnable {
-	private List<Contestant>	mContestants;
+	private List<Contestant>	mContestants;			// list of contestants in order they were created
 	private String				mName	= "Announcer";
-
+	private double				mRightPercent;
 	public static Object		intro	= new Object();
 
-	public Announcer(List<Contestant> contestants) {
+	public Announcer(List<Contestant> contestants, double rightPercent) {
 		mContestants = contestants;
+		mRightPercent = rightPercent;
 	}
 
 	@Override
 	public void run() {
 		log(mName + ": executing");
+		giveExams();
+		List<Integer> scores = gradeExams();
+		announceScores(scores);
+		startGame();
+	}
+
+	/**
+	 * Give exams to {@link Contestant}s when the {@link Room} is full or when the final group is seated and not when another exam is in progress.
+	 * When all test takers have taken the exam, no longer wait for others to take exam.
+	 */
+	private void giveExams() {
 		while (true) {
 			synchronized (Contestant.mRoom) {
 				if (Contestant.mRoom.allTested()) break;
@@ -29,12 +41,13 @@ public class Announcer extends Logger implements Runnable {
 				}
 			}
 		}
-
-		List<Integer> scores = gradeExams();
-		announceScores(scores);
-		startGame();
 	}
 
+	/**
+	 * Generates a list of randomly generated exam scores to be give to each test taker. Much like how most of QC does it. ha!
+	 * 
+	 * @return list of exam scores
+	 */
 	private List<Integer> gradeExams() {
 		log(mName + ": grading exams");
 		Random rand = new Random();
@@ -50,6 +63,12 @@ public class Announcer extends Logger implements Runnable {
 		return scores;
 	}
 
+	/**
+	 * Let each contestant know their score in the order they finished the exam.
+	 * 
+	 * @param scores
+	 *            List of scores to be given to each contestant.
+	 */
 	private void announceScores(List<Integer> scores) {
 		Collections.sort(scores);
 		Collections.reverse(scores);
@@ -75,9 +94,12 @@ public class Announcer extends Logger implements Runnable {
 		}
 	}
 
+	/**
+	 * Introduce each contestant that made it to the game. Then signal the Host to start the game.
+	 */
 	private void startGame() {
 		log(mName + ": print an opening message (something useful, it is up to you)");
-		new Thread(new Host()).start();
+		new Thread(new Host(mRightPercent)).start();
 
 		for (Contestant c : Contestant.mGame.getContestants()) {
 			log(mName + ": Welcome " + c.getName() + " to the game.");

@@ -12,7 +12,9 @@ public class Game {
 	private boolean				mGameStarted	= false;
 
 	public synchronized void addContestant(Contestant c) {
-		mContestants.add(c);
+		synchronized (mContestants) {
+			mContestants.add(c);
+		}
 	}
 
 	public synchronized List<Contestant> getContestants() {

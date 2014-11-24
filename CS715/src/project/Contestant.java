@@ -12,25 +12,28 @@ public class Contestant extends Logger implements Runnable {
 
 	public Object					mConvey			= new Object();
 
-	private static int				numContestants	= -1;
-	private static long				examTime		= 5000L;
+	private static int				mNumContestants	= -1;
+	private static long				mExamTime		= 5000L;
+	private static int				mQuestionValues	= 200;
 
 	private String					mName;
 	private int						mExamScore;
 	private boolean					mPassedExam		= false;
 	private Integer					mGameScore		= 0;
 	private int						mFinalWager		= -1;
-
 	private boolean					mDismiss		= false;
 
-	public Contestant(String name, int num_contestants) {
+	public Contestant(String name, int num_contestants, int questionValues, int numRounds, int numQuestions, int room_capacity) {
 		mName = "Contestant" + name;
 
 		synchronized (mRoom) {
-			if (numContestants == -1) {
-				numContestants = num_contestants;
-				mRoom.setRoomCapacity(4);
+			if (mNumContestants == -1) { // first contestant needs to set parameters
+				mNumContestants = num_contestants;
+				mRoom.setRoomCapacity(room_capacity);
 				mRoom.setTotalExams2Give(num_contestants);
+				mGame.setNumQuestions(numQuestions);
+				mGame.setNumRounds(numRounds);
+				mQuestionValues = questionValues;
 			}
 		}
 	}
@@ -60,9 +63,9 @@ public class Contestant extends Logger implements Runnable {
 	private synchronized void takeExam() {
 		log(mName + ": taking exam");
 		try {
-			this.wait(examTime);
+			this.wait(mExamTime);
 		} catch (InterruptedException e) {
-			e.printStackTrace();
+
 		}
 		synchronized (mRoom) {
 			mRoom.examTaken();
@@ -83,9 +86,12 @@ public class Contestant extends Logger implements Runnable {
 		}
 	}
 
+	/**
+	 * Wait to be introduced, then give my introduction and alert the Host am I done.
+	 */
 	private void waitForIntroduction() {
 		synchronized (mConvey) {
-			waitForSignal(mConvey, "waiting for game to start");
+			waitForSignal(mConvey, null);
 		}
 
 		log(mName + ": " + readyQuotes[new Random().nextInt(readyQuotes.length)]);
@@ -95,6 +101,9 @@ public class Contestant extends Logger implements Runnable {
 		}
 	}
 
+	/**
+	 * While the game is in round play mode, wait for a question, think for some time, and then attempt to answer the question.
+	 */
 	private void roundPlay() {
 		while (mGame.inRoundPlay()) {
 			waitForQuestion();
@@ -103,6 +112,10 @@ public class Contestant extends Logger implements Runnable {
 		}
 	}
 
+	/**
+	 * Wait for the final round to begin and I am asked a question. If my {@link #mGameScore} is greater than 0, give a wager and attempt to answer.
+	 * Otherwise, say goodbye.
+	 */
 	private void finalRound() {
 		synchronized (mConvey) {
 			waitForSignal(mConvey, null);
@@ -111,11 +124,10 @@ public class Contestant extends Logger implements Runnable {
 		if (mGameScore <= 0) {
 			log(mName + ": I did not bring my A game today.  See you next time!");
 			mDismiss = true;
+		} else {
+			mFinalWager = new Random().nextInt(mGameScore + 1);
+			think();
 		}
-
-		mFinalWager = new Random().nextInt(mGameScore + 1);
-		think();
-
 		synchronized (Host.answer) {
 			Host.answer.notify();
 		}
@@ -132,10 +144,14 @@ public class Contestant extends Logger implements Runnable {
 		try {
 			Thread.sleep(1500);
 		} catch (InterruptedException e) {
-			e.printStackTrace();
+
 		}
 	}
 
+	/**
+	 * Attempt to answer the question and give the answer to the {@link Host} if first contestant. If I am the last contestant to answer, wake up the
+	 * Host.
+	 */
 	private void answerQuestion() {
 		synchronized (Host.answer) {
 			Host.answer.incrementAnswers();
@@ -172,13 +188,13 @@ public class Contestant extends Logger implements Runnable {
 
 	public void correctAnswer() {
 		synchronized (mGameScore) {
-			mGameScore += 200;
+			mGameScore += mQuestionValues;
 		}
 	}
 
 	public void wrongAnswer() {
 		synchronized (mGameScore) {
-			mGameScore -= 200;
+			mGameScore -= mQuestionValues;
 		}
 	}
 
@@ -217,5 +233,5 @@ public class Contestant extends Logger implements Runnable {
 	}
 
 	static String[]	readyQuotes	= { "Ready to play!", "Let's ROCK!", "I already won this game.", "I am awesome!", "Really? I made it?",
-			"Where is my prize money?", "Thank you, thank you", "Let's drop the hammer", "I like to parrrr-taaayyy" };
+			"Where is my prize money?", "Thank you, thank you", "Let's drop the hammer", "Jean....can you hear me?", "I like to parrrr-taaayyy" };
 }
