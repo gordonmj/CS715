@@ -7,10 +7,12 @@ public class User implements Serializable {
 
 	private String				mUsername			= "";
 	private String				mPassword			= "";
+	private Type				mType;
 
-	public User(String username, String password) {
+	public User(String username, String password, Type type) {
 		mUsername = username;
 		mPassword = password;
+		mType = type;
 	}
 
 	public String getPassword() {
@@ -27,5 +29,13 @@ public class User implements Serializable {
 
 	public void setUsername(String username) {
 		mUsername = username;
+	}
+
+	public boolean isAdminAcct() {
+		return mType == Type.ADMIN;
+	}
+
+	public static enum Type {
+		USER, ADMIN
 	}
 }

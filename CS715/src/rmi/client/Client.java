@@ -16,17 +16,31 @@ public class Client implements Runnable {
 
 	@Override
 	public void run() {
+		login();
+	}
 
+	/**
+	 * <ol>
+	 * <li>Client program will prompt user to enter user name and password.</li>
+	 * <li>Client program will then use RMI (item 1) to identify if this user name/password combination is correct.</li>
+	 * <ul>
+	 * <li>If user name/password combination is NOT correct, display invalid credentials on the client screen and exit.</li>
+	 * <li>If user name/password combination is correct, display welcome User or welcome Administrator based on user account type.</li>
+	 * </ul>
+	 * </ol>
+	 */
+	private void login() {
 		while (mUser == null) {
-			authenticate();
+			if (!authenticate()) {
+				System.out.println("Invalid credentials");
+			}
 		}
-
+		System.out.println("Welcome " + (mUser.isAdminAcct() ? "Administrator" : "User"));
 	}
 
 	private boolean authenticate() {
 		boolean status = false;
 
-		// 1. Client program will prompt user to enter user name and password.
 		System.out.println("Enter user name");
 		String username = mConsole.nextLine();
 

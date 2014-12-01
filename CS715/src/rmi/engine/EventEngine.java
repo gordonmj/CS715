@@ -31,7 +31,7 @@ public class EventEngine implements Compute {
 	}
 
 	private void loadDefaultUsers() {
-		mUsers.add(new User("admin", "admin"));
+		mUsers.add(new User("admin", "admin", User.Type.ADMIN));
 	}
 
 	public List<User> getUsers() {
