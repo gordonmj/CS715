@@ -14,11 +14,15 @@ import rmi.tasks.CreateDelete;
 import rmi.tasks.DisplayUserAccts;
 
 public class Client implements Runnable {
-	private static final int	PORT		= 24690;
-	private static Scanner		mScanner	= new Scanner(System.in);
+	private static int		mPort		= 24690;					// default port
+	private static Scanner	mScanner	= new Scanner(System.in);
 
-	private User				mUser;
-	private boolean				mExit		= false;
+	private User			mUser;
+	private boolean			mExit		= false;
+
+	public Client(int port) {
+		mPort = port;
+	}
 
 	@Override
 	public void run() {
@@ -149,7 +153,7 @@ public class Client implements Runnable {
 
 		try {
 			String name = "Event";
-			Registry registry = LocateRegistry.getRegistry("localhost", PORT);
+			Registry registry = LocateRegistry.getRegistry("localhost", mPort);
 			Compute comp = (Compute) registry.lookup(name);
 			Authenticate task = new Authenticate(username, password);
 			mUser = comp.executeTask(task);
@@ -174,7 +178,7 @@ public class Client implements Runnable {
 
 		try {
 			String name = "Event";
-			Registry registry = LocateRegistry.getRegistry("localhost", PORT);
+			Registry registry = LocateRegistry.getRegistry("localhost", mPort);
 			Compute comp = (Compute) registry.lookup(name);
 			CreateDelete task = new CreateDelete(username, password);
 			status = comp.executeTask(task);
@@ -212,7 +216,7 @@ public class Client implements Runnable {
 
 		try {
 			String name = "Event";
-			Registry registry = LocateRegistry.getRegistry("localhost", PORT);
+			Registry registry = LocateRegistry.getRegistry("localhost", mPort);
 			Compute comp = (Compute) registry.lookup(name);
 			ResetPassword task = new ResetPassword(username, password);
 			status = comp.executeTask(task);
@@ -237,7 +241,7 @@ public class Client implements Runnable {
 
 		try {
 			String name = "Event";
-			Registry registry = LocateRegistry.getRegistry("localhost", PORT);
+			Registry registry = LocateRegistry.getRegistry("localhost", mPort);
 			Compute comp = (Compute) registry.lookup(name);
 			DisplayUserAccts task = new DisplayUserAccts();
 			users = comp.executeTask(task);

@@ -10,13 +10,14 @@ import rmi.compute.Compute;
 import rmi.data.User;
 import rmi.tasks.Task;
 
-public class EventEngine implements Compute {
-	private static final int	PORT	= 24690;
+public class EventEngine implements Compute, Runnable {
+	private static int			mPort	= 24690;	// default port
 
 	private Map<String, User>	mUsers;
 
-	public EventEngine() {
+	public EventEngine(int port) {
 		super();
+		mPort = port;
 		mUsers = new HashMap<String, User>();
 		loadDefaultUsers();
 	}
@@ -34,12 +35,13 @@ public class EventEngine implements Compute {
 		return mUsers;
 	}
 
-	public static void main(String[] args) {
+	@Override
+	public void run() {
 		try {
 			String name = "Event";
-			Compute engine = new EventEngine();
-			Compute stub = (Compute) UnicastRemoteObject.exportObject(engine, 0);
-			Registry registry = LocateRegistry.createRegistry(PORT);
+			//Compute engine = new EventEngine(mPort);
+			Compute stub = (Compute) UnicastRemoteObject.exportObject(this, 0);
+			Registry registry = LocateRegistry.createRegistry(mPort);
 			registry.rebind(name, stub);
 			System.out.println("EventEngine bound");
 		} catch (Exception e) {

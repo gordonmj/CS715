@@ -5,8 +5,7 @@ import java.util.Map;
 import rmi.data.User;
 
 public abstract class Task<T> {
-	@SuppressWarnings("unused")
-	private Map<String, User>	mUsers;
+	protected Map<String, User>	mUsers;
 
 	public abstract T execute();
 

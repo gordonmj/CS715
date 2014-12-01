@@ -10,7 +10,6 @@ public class Authenticate extends Task<User> implements Serializable {
 
 	private String				mUsername;
 	private String				mPassword;
-	private Map<String, User>	mUsers;
 
 	public Authenticate(String username, String password) {
 		mUsername = username;

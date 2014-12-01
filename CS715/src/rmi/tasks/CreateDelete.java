@@ -10,7 +10,6 @@ public class CreateDelete extends Task<Boolean> implements Serializable {
 
 	private String				mUsername;
 	private String				mPassword;
-	private Map<String, User>	mUsers;
 
 	public CreateDelete(String username, String password) {
 		mUsername = username;

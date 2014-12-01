@@ -8,8 +8,6 @@ import rmi.data.User;
 public class DisplayUserAccts extends Task<Map<String, User>> implements Serializable {
 	private static final long	serialVersionUID	= -1263998019923181454L;
 
-	private Map<String, User>	mUsers				= null;
-
 	public Map<String, User> execute() {
 		return mUsers;
 	}
