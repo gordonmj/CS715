@@ -5,7 +5,7 @@ import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 
 import rmi.compute.Compute;
-import rmi.compute.Task;
+import rmi.tasks.Task;
 
 public class ComputeEngine implements Compute {
 

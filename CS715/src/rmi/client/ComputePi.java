@@ -5,6 +5,7 @@ import java.rmi.registry.Registry;
 import java.math.BigDecimal;
 
 import rmi.compute.Compute;
+import rmi.tasks.Pi;
 
 public class ComputePi {
 	public static void main(String args[]) {

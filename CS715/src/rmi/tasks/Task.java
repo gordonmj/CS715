@@ -1,4 +1,4 @@
-package rmi.compute;
+package rmi.tasks;
 
 public interface Task<T> {
 	T execute();
