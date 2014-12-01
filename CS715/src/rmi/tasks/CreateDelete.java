@@ -1,8 +1,7 @@
 package rmi.tasks;
 
 import java.io.Serializable;
-import java.util.Iterator;
-import java.util.List;
+import java.util.Map;
 
 import rmi.data.User;
 
@@ -11,7 +10,7 @@ public class CreateDelete implements Task<Boolean>, Serializable {
 
 	private String				mUsername;
 	private String				mPassword;
-	private List<User>			mUsers;
+	private Map<String, User>	mUsers;
 
 	public CreateDelete(String username, String password) {
 		mUsername = username;
@@ -21,24 +20,23 @@ public class CreateDelete implements Task<Boolean>, Serializable {
 	@Override
 	public Boolean execute() {
 		boolean status = false;
+		User user = mUsers.get(mUsername);
+
 		if (mPassword.isEmpty()) {
 			// deleting account
-			for (Iterator<User> iter = mUsers.iterator(); iter.hasNext();) {
-				User user = iter.next();
-				if (user.getUsername().equals(mUsername)) {
-					iter.remove();
-					status = true;
-					break;
-				}
+			if (user != null) {
+				mUsers.remove(mUsername);
+				status = true;
 			}
 		} else {
 			// creating account
-			status = mUsers.add(new User(mUsername, mPassword, User.Type.USER));
+			mUsers.put(mUsername, new User(mUsername, mPassword, User.Type.USER));
+			status = true;
 		}
 		return status;
 	}
 
-	public void setUsers(List<User> users) {
+	public void setUsers(Map<String, User> users) {
 		mUsers = users;
 	}
 }

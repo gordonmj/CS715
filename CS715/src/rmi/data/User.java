@@ -5,10 +5,11 @@ import java.util.List;
 
 public class User implements Serializable {
 	private static final long	serialVersionUID	= 3593705434962682247L;
+	public static final String	DEFAULT_PASSWORD	= "12345";
 
 	private String				mUsername			= "";
 	private String				mPassword			= "";
-	private Type				mType;
+	private Type				mType				= Type.USER;			// default to USER
 	private List<Event>			mEvents;
 
 	public User(String username, String password, Type type) {
@@ -23,6 +24,10 @@ public class User implements Serializable {
 
 	public void setPassword(String password) {
 		mPassword = password;
+	}
+
+	public void resetPassword() {
+		mPassword = DEFAULT_PASSWORD;
 	}
 
 	public String getUsername() {

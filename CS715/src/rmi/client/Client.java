@@ -7,6 +7,7 @@ import java.util.Scanner;
 import rmi.compute.Compute;
 import rmi.data.User;
 import rmi.tasks.Authenticate;
+import rmi.tasks.ChangePassword;
 import rmi.tasks.CreateDelete;
 
 public class Client implements Runnable {
@@ -36,6 +37,7 @@ public class Client implements Runnable {
 				break;
 			case "2":
 				// Reset Password for User Account
+				resetPassword(true);
 				break;
 			case "3":
 				// Display List of User Account
@@ -76,6 +78,7 @@ public class Client implements Runnable {
 				break;
 			case "5":
 				// Change password to user’s account
+				resetPassword(false);
 				break;
 			case "6":
 				// Exit Program
@@ -184,6 +187,43 @@ public class Client implements Runnable {
 			System.out.println("Creation of " + username + (status ? " successful" : " unsuccessful"));
 		}
 
+		return status;
+	}
+
+	private boolean resetPassword(boolean reset) {
+		boolean status = false;
+		System.out.println("Reset Password for User Account");
+		String username = mUser.getUsername();
+
+		if (reset) {// ask for username of account to reset password
+			System.out.println("Enter user name");
+			username = mScanner.nextLine();
+		}
+
+		String password = null;
+		if (!reset) { // ask for new password
+			System.out.println("Enter password");
+			password = mScanner.nextLine();
+		}
+
+		try {
+			String name = "Event";
+			Registry registry = LocateRegistry.getRegistry("localhost", PORT);
+			Compute comp = (Compute) registry.lookup(name);
+			ChangePassword task = new ChangePassword(username, password);
+			status = comp.executeTask(task);
+		} catch (Exception e) {
+			System.err.println("Client exception:");
+			e.printStackTrace();
+		}
+
+		if (reset) {
+			// resetting password
+			System.out.println("Password reset" + (status ? " successfully" : " unsuccessfully"));
+		} else {
+			// changing password
+			System.out.println("Password changed" + (status ? " successfully" : " unsuccessfully"));
+		}
 		return status;
 	}
 }

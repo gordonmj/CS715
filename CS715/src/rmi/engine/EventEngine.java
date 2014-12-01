@@ -3,38 +3,34 @@ package rmi.engine;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import rmi.compute.Compute;
 import rmi.data.User;
-import rmi.tasks.Authenticate;
 import rmi.tasks.Task;
 
 public class EventEngine implements Compute {
 	private static final int	PORT	= 24690;
 
-	private List<User>			mUsers;
+	private Map<String, User>	mUsers;
 
 	public EventEngine() {
 		super();
-		mUsers = new ArrayList<User>();
+		mUsers = new HashMap<String, User>();
 		loadDefaultUsers();
 	}
 
 	public <T> T executeTask(Task<T> t) {
-		if (t instanceof Authenticate) {
-			Authenticate aTask = (Authenticate) t;
-			aTask.setUsers(mUsers);
-		}
+		t.setUsers(mUsers);
 		return t.execute();
 	}
 
 	private void loadDefaultUsers() {
-		mUsers.add(new User("admin", "admin", User.Type.ADMIN));
+		mUsers.put("admin", new User("admin", "admin", User.Type.ADMIN));
 	}
 
-	public List<User> getUsers() {
+	public Map<String, User> getUsers() {
 		return mUsers;
 	}
 

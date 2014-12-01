@@ -5,28 +5,33 @@ import java.util.Map;
 
 import rmi.data.User;
 
-public class Authenticate implements Task<User>, Serializable {
-	private static final long	serialVersionUID	= -8375785893425015013L;
+public class ChangePassword implements Task<Boolean>, Serializable {
+	private static final long	serialVersionUID	= -1113974153102066593L;
 
 	private String				mUsername;
 	private String				mPassword;
 	private Map<String, User>	mUsers;
 
-	public Authenticate(String username, String password) {
+	public ChangePassword(String username, String password) {
 		mUsername = username;
 		mPassword = password;
 	}
 
 	@Override
-	public User execute() {
+	public Boolean execute() {
+		boolean status = false;
 		User user = mUsers.get(mUsername);
 
 		if (user != null) {
-			if (user.getUsername().equals(mUsername) && user.getPassword().equals(mPassword)) {
-				return user;
+			if (mPassword == null) {
+				user.resetPassword();
+			} else {
+				user.setPassword(mPassword);
 			}
+			status = true;
 		}
-		return null;
+
+		return status;
 	}
 
 	public void setUsers(Map<String, User> users) {
