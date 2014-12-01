@@ -1,7 +1,6 @@
 package rmi.tasks;
 
 import java.io.Serializable;
-import java.util.Map;
 
 import rmi.data.User;
 
