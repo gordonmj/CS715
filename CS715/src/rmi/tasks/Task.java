@@ -1,5 +1,5 @@
 package rmi.tasks;
 
 public interface Task<T> {
-	T execute();
+	public T execute();
 }

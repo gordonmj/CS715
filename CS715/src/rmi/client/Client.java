@@ -7,6 +7,7 @@ import java.util.Scanner;
 import rmi.compute.Compute;
 import rmi.data.User;
 import rmi.tasks.Authenticate;
+import rmi.tasks.CreateDelete;
 
 public class Client implements Runnable {
 	private static final int	PORT		= 24690;
@@ -30,27 +31,29 @@ public class Client implements Runnable {
 		if (mUser.isAdminAcct()) {
 			switch (option) {
 			case "1":
-
+				// Create/Delete User Account
+				createDeleteAcct();
 				break;
 			case "2":
-
+				// Reset Password for User Account
 				break;
 			case "3":
-
+				// Display List of User Account
 				break;
 			case "4":
-
+				// Display schedule associated with specific user
 				break;
 			case "5":
-
+				// Add an event to selected user’s schedule
 				break;
 			case "6":
-
+				// Edit an event from selected user’s schedule
 				break;
 			case "7":
-
+				// Delete an event from selected user’s schedule
 				break;
 			case "8":
+				// Exit Program
 				mExit = true;
 				break;
 
@@ -60,21 +63,22 @@ public class Client implements Runnable {
 		} else {
 			switch (option) {
 			case "1":
-
+				// Display user’s schedule
 				break;
 			case "2":
-
+				// Add an event to user’s schedule
 				break;
 			case "3":
-
+				// Edit an event from user’s schedule
 				break;
 			case "4":
-
+				// Delete an event from user’s schedule
 				break;
 			case "5":
-
+				// Change password to user’s account
 				break;
 			case "6":
+				// Exit Program
 				mExit = true;
 				break;
 
@@ -147,6 +151,39 @@ public class Client implements Runnable {
 			System.err.println("Client exception:");
 			e.printStackTrace();
 		}
+		return status;
+	}
+
+	private boolean createDeleteAcct() {
+		boolean status = false;
+
+		System.out.println("Create/Delete User Account");
+		System.out.println("To delete account, leave password empty");
+		System.out.println("Enter user name");
+		String username = mScanner.nextLine();
+
+		System.out.println("Enter password");
+		String password = mScanner.nextLine();
+
+		try {
+			String name = "Event";
+			Registry registry = LocateRegistry.getRegistry("localhost", PORT);
+			Compute comp = (Compute) registry.lookup(name);
+			CreateDelete task = new CreateDelete(username, password);
+			status = comp.executeTask(task);
+		} catch (Exception e) {
+			System.err.println("Client exception:");
+			e.printStackTrace();
+		}
+
+		if (password.isEmpty()) {
+			// deleting account
+			System.out.println("Deletion of " + username + (status ? " successful" : " unsuccessful"));
+		} else {
+			// creating account
+			System.out.println("Creation of " + username + (status ? " successful" : " unsuccessful"));
+		}
+
 		return status;
 	}
 }

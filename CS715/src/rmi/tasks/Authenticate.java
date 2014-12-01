@@ -12,9 +12,9 @@ public class Authenticate implements Task<User>, Serializable {
 	private String				mPassword;
 	private List<User>			mUsers;
 
-	public Authenticate(String username, String pwd) {
+	public Authenticate(String username, String password) {
 		mUsername = username;
-		mPassword = pwd;
+		mPassword = password;
 	}
 
 	@Override

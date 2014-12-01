@@ -1,6 +1,7 @@
 package rmi.data;
 
 import java.io.Serializable;
+import java.util.List;
 
 public class User implements Serializable {
 	private static final long	serialVersionUID	= 3593705434962682247L;
@@ -8,6 +9,7 @@ public class User implements Serializable {
 	private String				mUsername			= "";
 	private String				mPassword			= "";
 	private Type				mType;
+	private List<Event>			mEvents;
 
 	public User(String username, String password, Type type) {
 		mUsername = username;
@@ -33,6 +35,10 @@ public class User implements Serializable {
 
 	public boolean isAdminAcct() {
 		return mType == Type.ADMIN;
+	}
+
+	public List<Event> getEvents() {
+		return mEvents;
 	}
 
 	public static enum Type {
