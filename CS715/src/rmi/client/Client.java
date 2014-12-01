@@ -2,13 +2,16 @@ package rmi.client;
 
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Scanner;
 
 import rmi.compute.Compute;
 import rmi.data.User;
 import rmi.tasks.Authenticate;
-import rmi.tasks.ChangePassword;
+import rmi.tasks.ResetPassword;
 import rmi.tasks.CreateDelete;
+import rmi.tasks.DisplayUserAccts;
 
 public class Client implements Runnable {
 	private static final int	PORT		= 24690;
@@ -41,6 +44,7 @@ public class Client implements Runnable {
 				break;
 			case "3":
 				// Display List of User Account
+				displayUsers();
 				break;
 			case "4":
 				// Display schedule associated with specific user
@@ -192,7 +196,7 @@ public class Client implements Runnable {
 
 	private boolean resetPassword(boolean reset) {
 		boolean status = false;
-		System.out.println("Reset Password for User Account");
+		System.out.println(reset ? "Reset Password for User Account" : "Change password to user’s account");
 		String username = mUser.getUsername();
 
 		if (reset) {// ask for username of account to reset password
@@ -210,7 +214,7 @@ public class Client implements Runnable {
 			String name = "Event";
 			Registry registry = LocateRegistry.getRegistry("localhost", PORT);
 			Compute comp = (Compute) registry.lookup(name);
-			ChangePassword task = new ChangePassword(username, password);
+			ResetPassword task = new ResetPassword(username, password);
 			status = comp.executeTask(task);
 		} catch (Exception e) {
 			System.err.println("Client exception:");
@@ -225,5 +229,31 @@ public class Client implements Runnable {
 			System.out.println("Password changed" + (status ? " successfully" : " unsuccessfully"));
 		}
 		return status;
+	}
+
+	private boolean displayUsers() {
+		Map<String, User> users = null;
+		System.out.println("Display List of User Account");
+
+		try {
+			String name = "Event";
+			Registry registry = LocateRegistry.getRegistry("localhost", PORT);
+			Compute comp = (Compute) registry.lookup(name);
+			DisplayUserAccts task = new DisplayUserAccts();
+			users = comp.executeTask(task);
+		} catch (Exception e) {
+			System.err.println("Client exception:");
+			e.printStackTrace();
+		}
+
+		if (users == null) {
+			System.out.println("Error retrieving users list");
+		} else {
+			System.out.println("Users in the system:");
+			for (Entry<String, User> entry : users.entrySet()) {
+				System.out.println(entry.getValue().getUsername());
+			}
+		}
+		return users == null;
 	}
 }

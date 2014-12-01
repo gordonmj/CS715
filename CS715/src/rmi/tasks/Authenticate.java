@@ -5,7 +5,7 @@ import java.util.Map;
 
 import rmi.data.User;
 
-public class Authenticate implements Task<User>, Serializable {
+public class Authenticate extends Task<User> implements Serializable {
 	private static final long	serialVersionUID	= -8375785893425015013L;
 
 	private String				mUsername;
@@ -17,7 +17,6 @@ public class Authenticate implements Task<User>, Serializable {
 		mPassword = password;
 	}
 
-	@Override
 	public User execute() {
 		User user = mUsers.get(mUsername);
 
@@ -29,7 +28,4 @@ public class Authenticate implements Task<User>, Serializable {
 		return null;
 	}
 
-	public void setUsers(Map<String, User> users) {
-		mUsers = users;
-	}
 }

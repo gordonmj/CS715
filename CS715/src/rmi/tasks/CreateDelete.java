@@ -5,7 +5,7 @@ import java.util.Map;
 
 import rmi.data.User;
 
-public class CreateDelete implements Task<Boolean>, Serializable {
+public class CreateDelete extends Task<Boolean> implements Serializable {
 	private static final long	serialVersionUID	= -6037436659887314867L;
 
 	private String				mUsername;
@@ -17,7 +17,6 @@ public class CreateDelete implements Task<Boolean>, Serializable {
 		mPassword = password;
 	}
 
-	@Override
 	public Boolean execute() {
 		boolean status = false;
 		User user = mUsers.get(mUsername);
@@ -36,7 +35,4 @@ public class CreateDelete implements Task<Boolean>, Serializable {
 		return status;
 	}
 
-	public void setUsers(Map<String, User> users) {
-		mUsers = users;
-	}
 }

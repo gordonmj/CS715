@@ -4,8 +4,13 @@ import java.util.Map;
 
 import rmi.data.User;
 
-public interface Task<T> {
-	public T execute();
+public abstract class Task<T> {
+	@SuppressWarnings("unused")
+	private Map<String, User>	mUsers;
 
-	public void setUsers(Map<String, User> users);
+	public abstract T execute();
+
+	public void setUsers(Map<String, User> users) {
+		mUsers = users;
+	}
 }
