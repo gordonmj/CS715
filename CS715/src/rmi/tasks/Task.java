@@ -9,6 +9,7 @@ public abstract class Task<T> {
 
 	public abstract T execute();
 
+	
 	public void setUsers(Map<String, User> users) {
 		mUsers = users;
 	}

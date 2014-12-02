@@ -29,6 +29,12 @@ public class Event implements Comparable<Event>, Serializable {
 	public void setDate(Date date) {
 		mDate = date;
 	}
+	
+	public String toString(){
+		return mTitle+": "+mDate;
+	}
+	
+	//setDate(String date)
 
 	@Override
 	public int compareTo(Event event) {

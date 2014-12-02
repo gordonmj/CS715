@@ -1,7 +1,12 @@
 package rmi.data;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Date;
+
+import rmi.data.Event;
+
 
 public class User implements Serializable {
 	private static final long	serialVersionUID	= 3593705434962682247L;
@@ -10,12 +15,19 @@ public class User implements Serializable {
 	private String				mUsername			= "";
 	private String				mPassword			= "";
 	private Type				mType				= Type.USER;			// default to USER
-	private List<Event>			mEvents;
+	private List<Event>			mEvents  = new ArrayList<Event>(); //Maybe TreeMap
 
 	public User(String username, String password, Type type) {
 		mUsername = username;
 		mPassword = password;
 		mType = type;
+		if (type != Type.ADMIN){
+			Date date = new Date();
+			System.out.println(date);
+			Event firstEvent = new Event("Account created.", date);
+			System.out.println(firstEvent);
+			mEvents.add(firstEvent);
+		}
 	}
 
 	public String getPassword() {
@@ -44,6 +56,11 @@ public class User implements Serializable {
 
 	public List<Event> getEvents() {
 		return mEvents;
+	}
+	
+	public void addEvent(String title, Date date){
+		Event event = new Event(title, date);
+		mEvents.add(0, event);
 	}
 
 	public static enum Type {

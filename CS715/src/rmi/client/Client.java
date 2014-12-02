@@ -9,9 +9,14 @@ import java.util.Scanner;
 import rmi.compute.Compute;
 import rmi.data.User;
 import rmi.tasks.Authenticate;
+import rmi.tasks.GetSchedule;
 import rmi.tasks.ResetPassword;
 import rmi.tasks.CreateDelete;
 import rmi.tasks.DisplayUserAccts;
+import java.util.List;
+import java.util.Date;
+import rmi.data.Event;
+
 
 public class Client implements Runnable {
 	private static final int	PORT		= 24690;					// default port
@@ -70,6 +75,7 @@ public class Client implements Runnable {
 			switch (option) {
 			case "1":
 				// Display user’s schedule
+				getSchedule();
 				break;
 			case "2":
 				// Add an event to user’s schedule
@@ -255,6 +261,27 @@ public class Client implements Runnable {
 			}
 		}
 		return users == null;
+	}
+	
+	private boolean getSchedule(){
+		List<Event> schedule = null;
+		System.out.println("Display schedule");
+		try {
+			String name = "Event";
+			Registry registry = LocateRegistry.getRegistry("localhost", PORT);
+			Compute comp = (Compute) registry.lookup(name);
+			GetSchedule task = new GetSchedule(mUser.getUsername());
+			schedule = comp.executeTask(task);
+		} catch (Exception e) {
+			System.err.println("Client exception:");
+			e.printStackTrace();
+		}	
+		//For loop to print events
+		for (int i=0;i<schedule.size();i++){
+			//I know this is not how to iterate over a list
+			System.out.println(schedule.get(i));
+		}
+		return schedule == null;
 	}
 
 	public static void main(String[] args) {
