@@ -316,7 +316,7 @@ public class Client implements Runnable {
 			String username = mScanner.nextLine();
 			System.out.println("Enter an event title");
 			String title = mScanner.nextLine();
-			System.out.println("Enter a date (Format: MMMM, d, yyyy");
+			System.out.println("Enter a date (Format: MMMM d, yyyy)");
 			String dateString = mScanner.nextLine();
 			Date date = new Date();
 			try {
@@ -340,7 +340,7 @@ public class Client implements Runnable {
 			try {
 				System.out.println("Enter an event title");
 				String title = mScanner.nextLine();
-				System.out.println("Enter a date");
+				System.out.println("Enter a date (MMMM d, yyyy)");
 				String dateString = mScanner.nextLine();
 				Date date = new SimpleDateFormat("MMMM d, yyyy").parse(dateString);
 				String name = "Event";
