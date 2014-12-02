@@ -2,19 +2,24 @@ package rmi.client;
 
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Scanner;
 
 import rmi.compute.Compute;
 import rmi.data.User;
+import rmi.tasks.AddEvent;
 import rmi.tasks.Authenticate;
 import rmi.tasks.GetSchedule;
 import rmi.tasks.ResetPassword;
 import rmi.tasks.CreateDelete;
 import rmi.tasks.DisplayUserAccts;
+
 import java.util.List;
 import java.util.Date;
+
 import rmi.data.Event;
 
 
@@ -53,9 +58,11 @@ public class Client implements Runnable {
 				break;
 			case "4":
 				// Display schedule associated with specific user
+				getSchedule();
 				break;
 			case "5":
 				// Add an event to selected user’s schedule
+				addEvent();
 				break;
 			case "6":
 				// Edit an event from selected user’s schedule
@@ -79,6 +86,7 @@ public class Client implements Runnable {
 				break;
 			case "2":
 				// Add an event to user’s schedule
+				addEvent();
 				break;
 			case "3":
 				// Edit an event from user’s schedule
@@ -266,24 +274,89 @@ public class Client implements Runnable {
 	private boolean getSchedule(){
 		List<Event> schedule = null;
 		System.out.println("Display schedule");
-		try {
-			String name = "Event";
-			Registry registry = LocateRegistry.getRegistry("localhost", PORT);
-			Compute comp = (Compute) registry.lookup(name);
-			GetSchedule task = new GetSchedule(mUser.getUsername());
-			schedule = comp.executeTask(task);
-		} catch (Exception e) {
-			System.err.println("Client exception:");
-			e.printStackTrace();
-		}	
+		if (mUser.isAdminAcct()) {
+			System.out.println("Enter user name");
+			String username = mScanner.nextLine();
+			try {
+				String name = "Event";
+				Registry registry = LocateRegistry.getRegistry("localhost", PORT);
+				Compute comp = (Compute) registry.lookup(name);
+				GetSchedule task = new GetSchedule(username);
+				schedule = comp.executeTask(task);
+			} catch (Exception e) {
+				System.err.println("Client exception:");
+				e.printStackTrace();
+			}	
+		}
+		else {
+			try {
+				String name = "Event";
+				Registry registry = LocateRegistry.getRegistry("localhost", PORT);
+				Compute comp = (Compute) registry.lookup(name);
+				GetSchedule task = new GetSchedule(mUser.getUsername());
+				schedule = comp.executeTask(task);
+			} catch (Exception e) {
+				System.err.println("Client exception:");
+				e.printStackTrace();
+			}	
+		}
 		//For loop to print events
 		for (int i=0;i<schedule.size();i++){
-			//I know this is not how to iterate over a list
-			System.out.println(schedule.get(i));
+			//I know this is not how to iterate over a list, but it's good enough for now
+			System.out.println(i+") "+schedule.get(i));
 		}
-		return schedule == null;
+		return schedule == null;			
 	}
 
+	private boolean addEvent(){
+		Event ev = null;
+		System.out.println("Adding event");
+		if (mUser.isAdminAcct()) {
+			System.out.println("Enter user name");
+			String username = mScanner.nextLine();
+			System.out.println("Enter an event title");
+			String title = mScanner.nextLine();
+			System.out.println("Enter a date");
+			String dateString = mScanner.nextLine();
+			Date date = new Date();
+			try {
+				date = new SimpleDateFormat("MMMM d, yyyy").parse(dateString);
+			} catch (ParseException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			try {
+				String name = "Event";
+				Registry registry = LocateRegistry.getRegistry("localhost", PORT);
+				Compute comp = (Compute) registry.lookup(name);
+				AddEvent task = new AddEvent(username, title, date);
+				ev = comp.executeTask(task);
+			} catch (Exception e) {
+				System.err.println("Client exception:");
+				e.printStackTrace();
+			}	
+		}
+		else {
+			try {
+				System.out.println("Enter an event title");
+				String title = mScanner.nextLine();
+				System.out.println("Enter a date");
+				String dateString = mScanner.nextLine();
+				Date date = new SimpleDateFormat("MMMM d, yyyy").parse(dateString);
+				String name = "Event";
+				Registry registry = LocateRegistry.getRegistry("localhost", PORT);
+				Compute comp = (Compute) registry.lookup(name);
+				AddEvent task = new AddEvent(mUser.getUsername(), title, date);
+				ev = comp.executeTask(task);
+			} catch (Exception e) {
+				System.err.println("Client exception:");
+				e.printStackTrace();
+			}	
+		}
+		//For loop to print events
+		System.out.println("Event added: "+ev);
+		return ev == null;			
+	}
 	public static void main(String[] args) {
 		new Thread(new Client()).start();
 	}

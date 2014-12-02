@@ -23,9 +23,7 @@ public class User implements Serializable {
 		mType = type;
 		if (type != Type.ADMIN){
 			Date date = new Date();
-			System.out.println(date);
 			Event firstEvent = new Event("Account created.", date);
-			System.out.println(firstEvent);
 			mEvents.add(firstEvent);
 		}
 	}
@@ -58,9 +56,10 @@ public class User implements Serializable {
 		return mEvents;
 	}
 	
-	public void addEvent(String title, Date date){
+	public Event addEvent(String title, Date date){
 		Event event = new Event(title, date);
 		mEvents.add(0, event);
+		return event;
 	}
 
 	public static enum Type {
