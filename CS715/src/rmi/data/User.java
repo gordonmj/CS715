@@ -23,7 +23,7 @@ public class User implements Serializable {
 		mType = type;
 		if (type != Type.ADMIN){
 			Date date = new Date();
-			Event firstEvent = new Event("Account created.", date);
+			Event firstEvent = new Event("Account created", date);
 			mEvents.add(firstEvent);
 		}
 	}
