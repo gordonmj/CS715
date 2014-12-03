@@ -25,7 +25,7 @@ public class FindEvent extends Task<Event> implements Serializable {
 		List <Event> events = user.getEvents();
 		for (int i=0; i < events.size(); i++){
 			System.out.println("i: "+i+", event i: "+events.get(i).getTitle()+" and search title is: "+mEventTitle);
-			if (events.get(i).getTitle() == mEventTitle){
+			if (events.get(i).getTitle().equalsIgnoreCase(mEventTitle)){
 				System.out.println("EQUAL!");
 				return events.get(i);
 			}
