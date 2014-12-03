@@ -15,6 +15,7 @@ import rmi.data.User;
 import rmi.tasks.AddEvent;
 import rmi.tasks.Authenticate;
 import rmi.tasks.CreateDelete;
+import rmi.tasks.DeleteEvent;
 import rmi.tasks.DisplayUserAccts;
 import rmi.tasks.EditEvent;
 import rmi.tasks.FindEvent;
@@ -68,6 +69,7 @@ public class Client implements Runnable {
 				break;
 			case "7":
 				// Delete an event from selected user’s schedule
+				deleteEvent();
 				break;
 			case "8":
 				// Exit Program
@@ -93,6 +95,7 @@ public class Client implements Runnable {
 				break;
 			case "4":
 				// Delete an event from user’s schedule
+				deleteEvent();
 				break;
 			case "5":
 				// Change password to user’s account
@@ -333,18 +336,33 @@ public class Client implements Runnable {
 	}
 	
 	private boolean editEvent() {
-		System.out.println("Editing event");
-		Event ev = null;
+		List<Event> schedule = null;
 		String username = mUser.getUsername();
-		
 		if (mUser.isAdminAcct()) {
 			System.out.println("Enter user name");
 			username = mScanner.nextLine();
 		}
 		try {
-			ev = findEvent(username);
-			if (ev==null){
-				System.out.println("No such event found.");
+			String name = "Event";
+			Registry registry = LocateRegistry.getRegistry("localhost", PORT);
+			Compute comp = (Compute) registry.lookup(name);
+			GetSchedule task = new GetSchedule(username);
+			schedule = comp.executeTask(task);
+		} catch (Exception e) {
+			System.err.println("Client exception:");
+			e.printStackTrace();
+			return false;
+		}
+		System.out.println("Pick from these events to edit:");
+		for (int i = 0; i < schedule.size(); i++) {
+			System.out.println(i + ") " + schedule.get(i));
+		}
+		Event ev = null;
+		System.out.println("Enter the number of the event you want to edit:");
+		int eventId = Integer.parseInt(mScanner.nextLine());
+		try {
+			if (eventId < 0 || eventId >= schedule.size()){
+				System.out.println("No event number not found.");
 				return false;
 			}
 			else {
@@ -353,11 +371,11 @@ public class Client implements Runnable {
 				System.out.println("Enter a date (MMMM d, yyyy) (or leave blank for no change)");
 				String dateString = mScanner.nextLine();
 				Date date = null;
-				if (dateString!="") date = new SimpleDateFormat("MMMM d, yyyy").parse(dateString);
+				if (!dateString.equals("")) date = new SimpleDateFormat("MMMM d, yyyy").parse(dateString);
 				String name = "Event";
 				Registry registry = LocateRegistry.getRegistry("localhost", PORT);
 				Compute comp = (Compute) registry.lookup(name);
-				EditEvent task = new EditEvent(ev, title, date);
+				EditEvent task = new EditEvent(username, eventId, title, date);
 				ev = comp.executeTask(task);
 			}
 		} catch (Exception e) {
@@ -369,26 +387,72 @@ public class Client implements Runnable {
 		return ev == null;
 	}
 	
-	private Event findEvent(String username){
-		Event ev = null;
+//	private Event findEvent(String username){
+//		Event ev = null;
+//
+//		try {
+//			System.out.println("Enter the title of the event you want to change.");
+//			String title = mScanner.nextLine();
+//			String name = "Event";
+//			Registry registry = LocateRegistry.getRegistry("localhost", PORT);
+//			Compute comp = (Compute) registry.lookup(name);
+//			FindEvent task = new FindEvent(username, title); //Why isn't this working?
+//			ev = comp.executeTask(task);
+//		} catch (Exception e) {
+//			System.err.println("Client exception:");
+//			e.printStackTrace();
+//			return null;
+//		}
+//		
+//		return ev;
+//	}
 
+	private boolean deleteEvent() {
+		List<Event> schedule = null;
+		String username = mUser.getUsername();
+		if (mUser.isAdminAcct()) {
+			System.out.println("Enter user name");
+			username = mScanner.nextLine();
+		}
 		try {
-			System.out.println("Enter the title of the event you want to change.");
-			String title = mScanner.nextLine();
 			String name = "Event";
 			Registry registry = LocateRegistry.getRegistry("localhost", PORT);
 			Compute comp = (Compute) registry.lookup(name);
-			FindEvent task = new FindEvent(username, title); //Why isn't this working?
-			ev = comp.executeTask(task);
+			GetSchedule task = new GetSchedule(username);
+			schedule = comp.executeTask(task);
 		} catch (Exception e) {
 			System.err.println("Client exception:");
 			e.printStackTrace();
-			return null;
+			return false;
 		}
-		
-		return ev;
+		System.out.println("Pick from these events to edit:");
+		for (int i = 0; i < schedule.size(); i++) {
+			System.out.println(i + ") " + schedule.get(i));
+		}
+		boolean status = false;;
+		System.out.println("Enter the number of the event you want to edit:");
+		int eventId = Integer.parseInt(mScanner.nextLine());
+		try {
+			if (eventId < 0 || eventId >= schedule.size()){
+				System.out.println("No event number not found.");
+				return false;
+			}
+			else {
+				String name = "Event";
+				Registry registry = LocateRegistry.getRegistry("localhost", PORT);
+				Compute comp = (Compute) registry.lookup(name);
+				DeleteEvent task = new DeleteEvent(username, eventId);
+				status = comp.executeTask(task);
+			}
+		} catch (Exception e) {
+			System.err.println("Client exception:");
+			e.printStackTrace();
+			return false;
+		}
+		System.out.println("Event deleted");
+		return status;
 	}
-
+	
 	public static void main(String[] args) {
 		new Thread(new Client()).start();
 	}

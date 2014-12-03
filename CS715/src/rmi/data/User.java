@@ -56,6 +56,10 @@ public class User implements Serializable {
 		return mEvents;
 	}
 	
+	public void removeEvent(Event e){
+		mEvents.remove(e);
+	}
+	
 	public Event addEvent(String title, Date date){
 		Event event = new Event(title, date);
 		mEvents.add(0, event);
