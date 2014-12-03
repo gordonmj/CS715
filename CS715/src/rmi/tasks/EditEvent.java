@@ -15,6 +15,7 @@ public class EditEvent extends Task<Event> implements Serializable {
 	private Date				mEventDate = null;
 	private Event				mEvent = null;
 	private String				mUsername = "";
+	private int					mId = 0;
 	
 	public EditEvent(Event event, String title, Date date){
 		mEventDate = date;
@@ -27,16 +28,18 @@ public class EditEvent extends Task<Event> implements Serializable {
 		mEventDate = date;
 		mEventString = title;
 		mUsername = username;
-		User user = mUsers.get(mUsername);
-		List <Event> events = user.getEvents();
-		mEvent = events.get(id);
+		mId = id;
 	}
 	
 	public Event execute() {	
+		System.out.println("username: "+mUsername);
+		User user = mUsers.get(mUsername);
+		List <Event> events = user.getEvents();
+		mEvent = events.get(mId);
 		if (mEventDate != null){
 			mEvent.setDate(mEventDate);
 		}
-		if (mEventString != ""){
+		if (!mEventString.equals("")){
 			mEvent.setTitle(mEventString);
 		}
 		

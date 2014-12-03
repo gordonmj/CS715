@@ -14,14 +14,18 @@ public class DeleteEvent extends Task<Boolean>  implements Serializable {
 	private Event				mEvent = null;
 	private String				mUsername = "";
 	private List <Event>		mEvents;
+	private int					mId = 0;
+	
 	public DeleteEvent(String username, int id){
 		mUsername = username;
-		User user = mUsers.get(mUsername);
-		mEvents = user.getEvents();
-		mEvent = mEvents.get(id);
+		mId = id;
 	}
 	
 	public Boolean execute() {	
+		System.out.println("username: "+mUsername);
+		User user = mUsers.get(mUsername);
+		mEvents = user.getEvents();
+		mEvent = mEvents.get(mId);
 		mEvents.remove(mEvent);		
 		return true;
 	}
