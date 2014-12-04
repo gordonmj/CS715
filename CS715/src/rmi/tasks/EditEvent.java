@@ -34,16 +34,18 @@ public class EditEvent extends Task<Event> implements Serializable {
 	public Event execute() {	
 		System.out.println("username: "+mUsername);
 		User user = mUsers.get(mUsername);
-		List <Event> events = user.getEvents();
-		mEvent = events.get(mId);
-		if (mEventDate != null){
-			mEvent.setDate(mEventDate);
+		if (user != null){
+			List <Event> events = user.getEvents();
+			mEvent = events.get(mId);
+			if (mEventDate != null){
+				mEvent.setDate(mEventDate);
+			}
+			if (!mEventString.equals("")){
+				mEvent.setTitle(mEventString);
+			}
+			return mEvent;
 		}
-		if (!mEventString.equals("")){
-			mEvent.setTitle(mEventString);
-		}
-		
-		return mEvent;
+		return null;
 	}
 	
 }

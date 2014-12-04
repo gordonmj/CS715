@@ -298,7 +298,10 @@ public class Client implements Runnable {
 			e.printStackTrace();
 			return false;
 		}
-
+		if (schedule==null){
+			System.out.println("Unsuccessful finding schedule. Please check that the username is correct.");
+			return false;
+		}
 		for (int i = 0; i < schedule.size(); i++) {
 			System.out.println(i + ") " + schedule.get(i));
 		}
@@ -330,7 +333,10 @@ public class Client implements Runnable {
 			e.printStackTrace();
 			return false;
 		}
-
+		if (ev == null){
+			System.out.println("Event added unsuccessfully. Check that the username is correct.");
+			return false;
+		}
 		System.out.println("Event added: " + ev);
 		return ev == null;
 	}
@@ -351,6 +357,10 @@ public class Client implements Runnable {
 		} catch (Exception e) {
 			System.err.println("Client exception:");
 			e.printStackTrace();
+			return false;
+		}
+		if (schedule==null){
+			System.out.println("Unsuccessful finding schedule. Please check that the username is correct.");
 			return false;
 		}
 		System.out.println("Pick from these events to edit:");
@@ -383,29 +393,14 @@ public class Client implements Runnable {
 			e.printStackTrace();
 			return false;
 		}
+		if (ev==null){
+			System.out.println("Unsuccessful editing event.");
+			return false;
+		}
+
 		System.out.println("Event edited: " + ev);
 		return ev == null;
 	}
-	
-//	private Event findEvent(String username){
-//		Event ev = null;
-//
-//		try {
-//			System.out.println("Enter the title of the event you want to change.");
-//			String title = mScanner.nextLine();
-//			String name = "Event";
-//			Registry registry = LocateRegistry.getRegistry("localhost", PORT);
-//			Compute comp = (Compute) registry.lookup(name);
-//			FindEvent task = new FindEvent(username, title); //Why isn't this working?
-//			ev = comp.executeTask(task);
-//		} catch (Exception e) {
-//			System.err.println("Client exception:");
-//			e.printStackTrace();
-//			return null;
-//		}
-//		
-//		return ev;
-//	}
 
 	private boolean deleteEvent() {
 		List<Event> schedule = null;
@@ -423,6 +418,10 @@ public class Client implements Runnable {
 		} catch (Exception e) {
 			System.err.println("Client exception:");
 			e.printStackTrace();
+			return false;
+		}
+		if (schedule==null){
+			System.out.println("Unsuccessful finding schedule. Please check that the username is correct.");
 			return false;
 		}
 		System.out.println("Pick from these events to edit:");
@@ -447,6 +446,10 @@ public class Client implements Runnable {
 		} catch (Exception e) {
 			System.err.println("Client exception:");
 			e.printStackTrace();
+			return false;
+		}
+		if (!status){
+			System.out.println("Unsuccessful deleting event.");
 			return false;
 		}
 		System.out.println("Event deleted");

@@ -18,7 +18,11 @@ public class GetSchedule extends Task<List<Event>> implements Serializable {
 	
 	public List<Event> execute() {	
 		User user = mUsers.get(mUsername);
-		return user.getEvents();
+		if (user != null) {
+			System.out.println("user is null");
+			return user.getEvents();
+		}
+		else return null;
 	}
 	
 }
