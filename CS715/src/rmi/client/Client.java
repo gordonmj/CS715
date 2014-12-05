@@ -4,6 +4,7 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -295,12 +296,6 @@ public class Client implements Runnable {
 		return ev == null;
 	}
 
-	private void printEventsToConsole(List<Event> events) {
-		for (int i = 0; i < events.size(); i++) {
-			System.out.println(i + ") " + events.get(i));
-		}
-	}
-
 	@SuppressWarnings("unchecked")
 	private boolean editEvent() {
 		System.out.println("Edit event");
@@ -322,13 +317,7 @@ public class Client implements Runnable {
 		System.out.println("Pick from these events to edit:");
 		printEventsToConsole(schedule);
 
-		int eventId = Integer.parseInt(getUserInput("Enter the number of the event you want to edit:"));
-
-		if (eventId < 0 || eventId >= schedule.size()) {
-			System.out.println("Event number not found.");
-			return false;
-		}
-
+		int eventId = Integer.parseInt(getUserInput("Select the ID of the Event to edit:"));
 		String title = getUserInput("Enter a new event title (or leave blank for no change)");
 		String dateString = getUserInput("Enter a date (MMMM d, yyyy) (or leave blank for no change)");
 		Date date = null;
@@ -372,16 +361,10 @@ public class Client implements Runnable {
 			return false;
 		}
 
-		System.out.println("Pick from these events to edit:");
+		System.out.println("Select the ID of the Event to delete:");
 		printEventsToConsole(schedule);
 
 		int eventId = Integer.parseInt(getUserInput("Enter the number of the event you want to edit:"));
-
-		if (eventId < 0 || eventId >= schedule.size()) {
-			System.out.println("Event number not found.");
-			return false;
-		}
-
 		obj = executeTask(new DeleteEvent(username, eventId));
 
 		if (obj == null) System.out.println("Unsuccessful deleting event.");
@@ -406,6 +389,13 @@ public class Client implements Runnable {
 			rObj = null;
 		}
 		return rObj;
+	}
+
+	private void printEventsToConsole(List<Event> events) {
+		Collections.sort(events);
+		for (Event event : events) {
+			System.out.println(event);
+		}
 	}
 
 	private String getUserInput(String comment) {

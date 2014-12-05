@@ -1,6 +1,7 @@
 package rmi.tasks;
 
 import java.io.Serializable;
+import java.util.Iterator;
 import java.util.List;
 
 import rmi.data.Event;
@@ -21,9 +22,15 @@ public class DeleteEvent extends Task<Boolean> implements Serializable {
 		User user = mUsers.get(mUsername);
 		if (user != null) {
 			List<Event> events = user.getEvents();
-			Event event = events.get(mEventId);
 
-			return event == null ? false : events.remove(event);
+			for (Iterator<Event> iterator = events.iterator(); iterator.hasNext();) {
+				Event event = iterator.next();
+
+				if (event.getEventId() == mEventId) {
+					iterator.remove();
+					return true;
+				}
+			}
 		}
 		return false;
 	}

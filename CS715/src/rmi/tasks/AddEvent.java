@@ -21,7 +21,7 @@ public class AddEvent extends Task<Event> implements Serializable {
 	public Event execute() {
 		User user = mUsers.get(mUsername);
 		if (user != null) {
-			return user.addEvent(mEventString, mEventDate);
+			return user.addEvent(mEventString, mEventDate, user.getNextEventID());
 		}
 		return null;
 	}

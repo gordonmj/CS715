@@ -15,6 +15,7 @@ public class User implements Serializable {
 	private String				mPassword			= "";
 	private Type				mType				= Type.USER;				// default to USER
 	private List<Event>			mEvents				= new ArrayList<Event>();
+	private int					mNextEventID		= 1;
 
 	public User(String username, String password, Type type) {
 		mUsername = username;
@@ -22,8 +23,7 @@ public class User implements Serializable {
 		mType = type;
 		if (type != Type.ADMIN) {
 			Date date = new Date();
-			Event firstEvent = new Event("Account created", date);
-			mEvents.add(firstEvent);
+			addEvent("Account created", date, getNextEventID());
 		}
 	}
 
@@ -33,6 +33,10 @@ public class User implements Serializable {
 
 	public void setPassword(String password) {
 		mPassword = password;
+	}
+
+	public int getNextEventID() {
+		return mNextEventID++;
 	}
 
 	public void resetPassword() {
@@ -59,9 +63,9 @@ public class User implements Serializable {
 		mEvents.remove(e);
 	}
 
-	public Event addEvent(String title, Date date) {
-		Event event = new Event(title, date);
-		mEvents.add(0, event);
+	public Event addEvent(String title, Date date, int eventId) {
+		Event event = new Event(title, date, eventId);
+		mEvents.add(event);
 		return event;
 	}
 

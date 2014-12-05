@@ -8,10 +8,12 @@ public class Event implements Comparable<Event>, Serializable {
 
 	private String				mTitle				= "";
 	private Date				mDate				= new Date();
+	private int					mEventId			= 0;
 
-	public Event(String title, Date date) {
+	public Event(String title, Date date, int eventId) {
 		mTitle = title;
 		mDate = date;
+		mEventId = eventId;
 	}
 
 	public String getTitle() {
@@ -29,12 +31,15 @@ public class Event implements Comparable<Event>, Serializable {
 	public void setDate(Date date) {
 		mDate = date;
 	}
-	
-	public String toString(){
-		return mTitle+": "+mDate;
+
+	public int getEventId() {
+		return mEventId;
 	}
-	
-	//setDate(String date)
+
+	@Override
+	public String toString() {
+		return "ID: " + mEventId + "\tTitle: " + mTitle + "\tDate: " + mDate;
+	}
 
 	@Override
 	public int compareTo(Event event) {
