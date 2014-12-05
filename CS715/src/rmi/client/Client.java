@@ -375,7 +375,7 @@ public class Client implements Runnable {
 		System.out.println("Pick from these events to edit:");
 		printEventsToConsole(schedule);
 
-		int eventId = Integer.parseInt("Enter the number of the event you want to edit:");
+		int eventId = Integer.parseInt(getUserInput("Enter the number of the event you want to edit:"));
 
 		if (eventId < 0 || eventId >= schedule.size()) {
 			System.out.println("Event number not found.");
