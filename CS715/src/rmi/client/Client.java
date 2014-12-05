@@ -274,7 +274,7 @@ public class Client implements Runnable {
 			username = getUserInput("Enter user name");
 		}
 
-		String title = getUserInput("Enter an event title, title must be unique");
+		String title = getUserInput("Enter an event title");
 		String dateString = getUserInput("Enter a date (MMM d, yyyy)");
 		Date date = null;
 		try {
