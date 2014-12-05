@@ -207,7 +207,7 @@ public class Client implements Runnable {
 
 		String password = null;
 		if (!reset) { // ask for new password
-			System.out.println("Enter password");
+			System.out.println("Enter new password");
 			password = mScanner.nextLine();
 		}
 
