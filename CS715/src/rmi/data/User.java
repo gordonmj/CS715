@@ -7,21 +7,20 @@ import java.util.Date;
 
 import rmi.data.Event;
 
-
 public class User implements Serializable {
 	private static final long	serialVersionUID	= 3593705434962682247L;
 	public static final String	DEFAULT_PASSWORD	= "12345";
 
 	private String				mUsername			= "";
 	private String				mPassword			= "";
-	private Type				mType				= Type.USER;			// default to USER
-	private List<Event>			mEvents  = new ArrayList<Event>(); //Maybe TreeMap
+	private Type				mType				= Type.USER;				// default to USER
+	private List<Event>			mEvents				= new ArrayList<Event>();
 
 	public User(String username, String password, Type type) {
 		mUsername = username;
 		mPassword = password;
 		mType = type;
-		if (type != Type.ADMIN){
+		if (type != Type.ADMIN) {
 			Date date = new Date();
 			Event firstEvent = new Event("Account created", date);
 			mEvents.add(firstEvent);
@@ -55,12 +54,12 @@ public class User implements Serializable {
 	public List<Event> getEvents() {
 		return mEvents;
 	}
-	
-	public void removeEvent(Event e){
+
+	public void removeEvent(Event e) {
 		mEvents.remove(e);
 	}
-	
-	public Event addEvent(String title, Date date){
+
+	public Event addEvent(String title, Date date) {
 		Event event = new Event(title, date);
 		mEvents.add(0, event);
 		return event;

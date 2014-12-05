@@ -1,36 +1,34 @@
 package rmi.tasks;
 
 import java.io.Serializable;
-
-import rmi.compute.Compute;
-import rmi.data.User;
-import rmi.data.Event;
-
-import java.util.Date;
 import java.util.List;
 
-public class FindEvent extends Task<Event> implements Serializable {	
-	private static final long serialVersionUID = -5650631568386141268L;
-	private String				mUsername = "";
-	private String				mEventTitle = "";
-	
-	public FindEvent(String username, String title){
+import rmi.data.Event;
+import rmi.data.User;
+
+public class FindEvent extends Task<Event> implements Serializable {
+	private static final long	serialVersionUID	= -5650631568386141268L;
+	private String				mUsername			= "";
+	private String				mEventTitle			= "";
+
+	public FindEvent(String username, String title) {
 		mUsername = username;
 		mEventTitle = title;
-		
+
 	}
-	
-	public Event execute() {	
+
+	public Event execute() {
 		User user = mUsers.get(mUsername);
-		List <Event> events = user.getEvents();
-		for (int i=0; i < events.size(); i++){
-			System.out.println("i: "+i+", event i: "+events.get(i).getTitle()+" and search title is: "+mEventTitle);
-			if (events.get(i).getTitle().equalsIgnoreCase(mEventTitle)){
-				System.out.println("EQUAL!");
-				return events.get(i);
+		if (user != null) {
+			List<Event> events = user.getEvents();
+
+			for (Event event : events) {
+				if (event.getTitle().equalsIgnoreCase(mEventTitle)) {
+					return event;
+				}
 			}
 		}
 		return null;
 	}
-	
+
 }

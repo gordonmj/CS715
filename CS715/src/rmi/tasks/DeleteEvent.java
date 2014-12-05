@@ -1,36 +1,31 @@
 package rmi.tasks;
 
 import java.io.Serializable;
-
-import rmi.compute.Compute;
-import rmi.data.User;
-import rmi.data.Event;
-
-import java.util.Date;
 import java.util.List;
 
-public class DeleteEvent extends Task<Boolean>  implements Serializable {	
-	private static final long serialVersionUID = 1469892477973061110L;
-	private Event				mEvent = null;
-	private String				mUsername = "";
-	private List <Event>		mEvents;
-	private int					mId = 0;
-	
-	public DeleteEvent(String username, int id){
+import rmi.data.Event;
+import rmi.data.User;
+
+public class DeleteEvent extends Task<Boolean> implements Serializable {
+	private static final long	serialVersionUID	= 1469892477973061110L;
+	private String				mUsername			= "";
+	private int					mEventId			= 0;
+
+	public DeleteEvent(String username, int eventId) {
 		mUsername = username;
-		mId = id;
+		mEventId = eventId;
 	}
-	
-	public Boolean execute() {	
-		System.out.println("username: "+mUsername);
+
+	public Boolean execute() {
+		System.out.println("username: " + mUsername);
 		User user = mUsers.get(mUsername);
-		if (user != null){
-			mEvents = user.getEvents();
-			mEvent = mEvents.get(mId);
-			mEvents.remove(mEvent);		
-			return true;
+		if (user != null) {
+			List<Event> events = user.getEvents();
+			Event event = events.get(mEventId);
+
+			return event == null ? false : events.remove(event);
 		}
 		return false;
 	}
-	
+
 }
