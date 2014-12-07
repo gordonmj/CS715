@@ -363,11 +363,11 @@ public class Client implements Runnable {
 
 		System.out.println("Select the ID of the Event to delete:");
 		printEventsToConsole(schedule);
-
+		
 		int eventId = Integer.parseInt(getUserInput("Enter the number of the event you want to edit:"));
+		Boolean status = new Boolean(false);
 		obj = executeTask(new DeleteEvent(username, eventId));
-
-		if (obj == null) System.out.println("Unsuccessful deleting event.");
+		if (obj.equals(status)) System.out.println("Unsuccessful deleting event.");
 		else System.out.println("Event deleted");
 
 		return obj == null;
