@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Main {
-	static// Contestant variables: num_contestants, questionValues
-	int				num_contestants	= 13;
+	// Contestant variables: num_contestants, questionValues
+	static int		num_contestants	= 13;
 	static int		questionValues	= 200;
 
 	// Game variables: numRounds, numQuestions
