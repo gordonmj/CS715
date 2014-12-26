@@ -16,8 +16,7 @@ public class AnnouncerClient extends Logger implements Runnable {
 	private static String	mServername;
 	private static int		mPort;
 
-	public AnnouncerClient(String name, String serverName, int port) {
-		mName = name;
+	public AnnouncerClient(String serverName, int port) {
 		mServername = serverName;
 		mPort = port;
 	}
@@ -37,7 +36,7 @@ public class AnnouncerClient extends Logger implements Runnable {
 						break;
 					case Constants.CONNECTED:
 						log(mName + " connected to " + mServername);
-						out.println(Constants.GIVE_EXAMS);
+						out.println(mName + "|" + Constants.GIVE_EXAMS);
 						break;
 					case Constants.EXAMS_GIVEN:
 						log(mName + " finished giving exams");
