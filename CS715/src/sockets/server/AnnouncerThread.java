@@ -22,46 +22,49 @@ public class AnnouncerThread extends Logger implements Runnable {
 	private List<Contestant>	mContestants;							// list of contestants in order they were created
 	private String				mName			= "AnnouncerThread";
 	private double				mRightPercent	= 0.65;
+	private PrintWriter			mOut;
+	private BufferedReader		mIn;
+
 	public static Object		intro			= new Object();
 
-	public AnnouncerThread(Socket socket) {
+	public AnnouncerThread(Socket socket, PrintWriter out, BufferedReader in) {
 		mSocket = socket;
+		mOut = out;
+		mIn = in;
 	}
 
 	@Override
 	public void run() {
 		try {
-			PrintWriter out = new PrintWriter(mSocket.getOutputStream(), true);
-			BufferedReader in = new BufferedReader(new InputStreamReader(mSocket.getInputStream()));
 			String inputLine, outputLine;
 
 			// Initiate conversation with client
 			outputLine = Constants.CONNECTED;
-			out.println(outputLine);
+			mOut.println(outputLine);
 
 			boolean listening = true;
 			List<Integer> scores = null;
 
-			while ((inputLine = in.readLine()) != null) {
+			while ((inputLine = mIn.readLine()) != null) {
 				String[] input = inputLine.split("\\|");
 
 				switch (input[1]) {
-					case Constants.GIVE_EXAMS:
-						giveExams();
-						out.println(Constants.EXAMS_GIVEN);
-						break;
-					case Constants.GRADE_EXAMS:
-						scores = gradeExams();
-						out.println(Constants.EXAMS_GRADED);
-						break;
-					case Constants.ANNOUNCE_SCORES:
-						announceScores(scores);
-						out.println(Constants.SCORES_ANNOUNCED);
-						break;
-					case Constants.START_GAME:
-						startGame();
-						listening = false;
-						break;
+				case Constants.GIVE_EXAMS:
+					giveExams();
+					mOut.println(Constants.EXAMS_GIVEN);
+					break;
+				case Constants.GRADE_EXAMS:
+					scores = gradeExams();
+					mOut.println(Constants.EXAMS_GRADED);
+					break;
+				case Constants.ANNOUNCE_SCORES:
+					announceScores(scores);
+					mOut.println(Constants.SCORES_ANNOUNCED);
+					break;
+				case Constants.START_GAME:
+					startGame();
+					listening = false;
+					break;
 				}
 				if (!listening) break;
 			}

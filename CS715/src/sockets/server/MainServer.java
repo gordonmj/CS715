@@ -19,7 +19,8 @@ public class MainServer {
 			System.out.println("Main Server Running on " + InetAddress.getLocalHost().getHostName() + " on port #" + Constants.PORT);
 			while (listening) {
 				try (Socket socket = serverSocket.accept()) {
-					identify(socket);
+					// identify(socket);
+					new Thread(new ServerThread(socket)).start();
 				} catch (IOException e) {
 
 				}
@@ -28,7 +29,6 @@ public class MainServer {
 			System.err.println("Could not listen on port " + Constants.PORT);
 			System.exit(-1);
 		}
-
 	}
 
 	private static void identify(Socket socket) {
@@ -43,15 +43,15 @@ public class MainServer {
 
 			while ((inputLine = in.readLine()) != null) {
 				switch (inputLine) {
-					case Constants.ANNOUNCER:
-						new AnnouncerThread(socket).run();
-						break;
-					case Constants.HOST:
-						new ContestantThread(socket).run();
-						break;
-					case Constants.CONTESTANT:
-						new ContestantThread(socket).run();
-						break;
+				case Constants.ANNOUNCER:
+					new Thread(new AnnouncerThread(socket, out, in)).start();
+					break;
+				case Constants.HOST:
+					// new Thread(new ContestantThread(socket)).start();
+					break;
+				case Constants.CONTESTANT:
+					new Thread(new ContestantThread(socket, out, in)).start();
+					break;
 				}
 			}
 		} catch (IOException e) {
