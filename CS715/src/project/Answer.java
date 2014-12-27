@@ -1,10 +1,13 @@
 package project;
 
+import sockets.server.ServerThread;
+
 public class Answer {
 
-	private int			mNumAnswers		= 0;
-	private Contestant	mAnsweredBy;
-	private double		mRightPercent	= 0.65;
+	private int				mNumAnswers		= 0;
+	private Contestant		mAnsweredBy;
+	private ServerThread	mAnsweredByThread;
+	private double			mRightPercent	= 0.65;
 
 	public synchronized void newAnswer() {
 		mNumAnswers = 0;
@@ -25,6 +28,14 @@ public class Answer {
 
 	public synchronized void setAnsweredBy(Contestant answeredBy) {
 		mAnsweredBy = answeredBy;
+	}
+
+	public synchronized ServerThread getAnsweredByThread() {
+		return mAnsweredByThread;
+	}
+
+	public synchronized void setAnsweredByThread(ServerThread answeredBy) {
+		mAnsweredByThread = answeredBy;
 	}
 
 	public synchronized double getRightPercent() {

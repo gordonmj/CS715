@@ -4,12 +4,15 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import sockets.server.ServerThread;
+
 public class Game {
-	private int					numRounds		= 2;
-	private int					numQuestions	= 5;
-	private List<Contestant>	mContestants	= Collections.synchronizedList(new ArrayList<Contestant>());
-	private boolean				mRoundPlay		= true;
-	private boolean				mGameStarted	= false;
+	private int					numRounds			= 2;
+	private int					numQuestions		= 5;
+	private List<Contestant>	mContestants		= Collections.synchronizedList(new ArrayList<Contestant>());
+	private List<ServerThread>	mContestantsThreads	= Collections.synchronizedList(new ArrayList<ServerThread>());
+	private boolean				mRoundPlay			= true;
+	private boolean				mGameStarted		= false;
 
 	public synchronized void addContestant(Contestant c) {
 		synchronized (mContestants) {
@@ -19,6 +22,16 @@ public class Game {
 
 	public synchronized List<Contestant> getContestants() {
 		return mContestants;
+	}
+
+	public void addContestant(ServerThread c) {
+		synchronized (mContestantsThreads) {
+			mContestantsThreads.add(c);
+		}
+	}
+
+	public synchronized List<ServerThread> getContestantsThreads() {
+		return mContestantsThreads;
 	}
 
 	public synchronized int getNumRounds() {
@@ -52,4 +65,5 @@ public class Game {
 	public synchronized void setGameStarted(boolean gameStarted) {
 		mGameStarted = gameStarted;
 	}
+
 }

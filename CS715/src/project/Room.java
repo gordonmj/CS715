@@ -1,7 +1,7 @@
 package project;
 
 public class Room {
-	private int		mRoomCapacity;
+	private int		mRoomCapacity	= -1;
 	private int		mSeatsAvailable;
 	private int		mTotalExams2Give;
 	private int		mNumExamsTaken	= 0;
