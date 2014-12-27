@@ -23,6 +23,7 @@ public class Constants {
 	public static final String	OK_FOR_GAME			= "okForGame";
 
 	public static final String	WAIT_FOR_INTRO		= "waitForIntro";
+	public static final String	INTRO_GIVEN			= "introGiven";
 
 	/** ANNOUNCER COMMUNICATION **/
 	public static final String	GIVE_EXAMS			= "giveExams";
