@@ -25,6 +25,8 @@ public class Constants {
 	public static final String	WAIT_FOR_INTRO		= "waitForIntro";
 	public static final String	INTRO_GIVEN			= "introGiven";
 
+	public static final String	GAME_PLAY			= "gamePlay";
+
 	/** ANNOUNCER COMMUNICATION **/
 	public static final String	GIVE_EXAMS			= "giveExams";
 	public static final String	EXAMS_GIVEN			= "examsGiven";
@@ -36,5 +38,11 @@ public class Constants {
 	public static final String	SCORES_ANNOUNCED	= "scoresAnnounced";
 
 	public static final String	START_GAME			= "startGame";
+
+	/** HOST COMMUNICATION **/
+	public static final String	WAIT_FOR_GAME_START	= "waitForGameStart";
+	public static final String	GAME_STARTED		= "gameStarted";
+
+	public static final String	GAME_PLAY_HOST		= "gamePlayHost";
 
 }
