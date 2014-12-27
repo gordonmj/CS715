@@ -19,6 +19,8 @@ public class Constants {
 	public static final String	EXAM_TAKEN			= "examTaken";
 
 	public static final String	WAIT_FOR_RESULTS	= "waitForResults";
+	public static final String	GOODBYE				= "goodbye";
+	public static final String	OK_FOR_GAME			= "okForGame";
 
 	/** ANNOUNCER COMMUNICATION **/
 	public static final String	GIVE_EXAMS			= "giveExams";
