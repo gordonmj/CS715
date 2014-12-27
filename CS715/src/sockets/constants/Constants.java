@@ -18,6 +18,8 @@ public class Constants {
 	public static final String	TAKE_EXAM			= "takeExam";
 	public static final String	EXAM_TAKEN			= "examTaken";
 
+	public static final String	WAIT_FOR_RESULTS	= "waitForResults";
+
 	/** ANNOUNCER COMMUNICATION **/
 	public static final String	GIVE_EXAMS			= "giveExams";
 	public static final String	EXAMS_GIVEN			= "examsGiven";
