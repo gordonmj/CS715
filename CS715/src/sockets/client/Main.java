@@ -1,5 +1,6 @@
 package sockets.client;
 
+import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,7 +12,7 @@ public class Main {
 	static int				num_contestants	= 13;
 
 	public static void main(String[] args) throws UnknownHostException {
-		mServerName = "rival-PC";// InetAddress.getLocalHost().getHostName();
+		mServerName = InetAddress.getLocalHost().getHostName();
 
 		new Thread(new AnnouncerClient(mServerName, Constants.PORT)).start();
 		new Thread(new HostClient(mServerName, Constants.PORT)).start();
