@@ -261,7 +261,7 @@ public class ServerThread extends Logger implements Runnable {
 		synchronized (answer) {
 			answer.incrementAnswers();
 
-			if (answer.getAnsweredBy() == null) answer.setAnsweredByThread(this);
+			if (answer.getAnsweredByThread() == null) answer.setAnsweredByThread(this);
 
 			if (answer.everyoneAnswered()) {
 				answer.notify();
