@@ -9,8 +9,8 @@
 
 ### Communication in Distributed Systems 
 * Create an Authentication Service Using RMI 
-    1. Link to requirements
-    2. How to run: [link text](src/master/CS715/RMI.pdf)
+    1. [Link to requirements](src/master/CS715/RMI.pdf)
+    2. How to run: 
         + Start Server via: `rmi.engine.EventEngine.java`
         + Start Client via: `rmi.client.Client.java`
          
