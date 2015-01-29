@@ -11,10 +11,10 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Random;
 
-import project.Answer;
-import project.Game;
-import project.Logger;
-import project.Room;
+import project1.Answer;
+import project1.Game;
+import project1.Logger;
+import project1.Room;
 import sockets.constants.Constants;
 
 public class ServerThread extends Logger implements Runnable {

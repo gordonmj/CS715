@@ -1,4 +1,4 @@
-package project;
+package project1;
 
 public class Room {
 	private int		mRoomCapacity	= -1;

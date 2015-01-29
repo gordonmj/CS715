@@ -1,4 +1,4 @@
-package project;
+package project1;
 
 import sockets.server.ServerThread;
 

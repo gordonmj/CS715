@@ -7,7 +7,7 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
-import project.Logger;
+import project1.Logger;
 import sockets.constants.Constants;
 
 public class HostClient extends Logger implements Runnable {
