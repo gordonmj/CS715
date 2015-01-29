@@ -26,8 +26,8 @@
         + Start Client via: `rmi.client.Client.java`
          
 ### Client Server Java model
-* Create an Authentication Service Using Remote Method Invocation (RMI) 
-    1. [Link to requirements](src/master/CS715/RMI.pdf)
+* Client and Server Socket classes 
+    1. [Link to requirements](src/master/CS715/project2.pdf)
     2. How to run: 
-        + Start Server via: `rmi.engine.EventEngine.java`
-        + Start Client via: `rmi.client.Client.java`
+        + Start Server via: `sockets.server.MainServer.java`
+        + Start Client via: `sockets.client.HostClient.java`
