@@ -3,7 +3,7 @@ package hw6;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 
-public class hw6 {
+public class Main {
 
 	public static void main(String[] args) {
 		try {
