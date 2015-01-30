@@ -3,7 +3,7 @@
 ## **Content** ##
 ### Synchronization in Distributed Systems 
 * Distributed Mutual Exclusion 
-    1. [Link to requirements](https://bitbucket.org/rival95/cs715/src/master/CS715/project1.pdf)
+    1. [Link to requirements](src/master/CS715/project1.pdf)
     2. How to run: 
         + Start via: `project1.Main.java`
 
@@ -20,14 +20,14 @@
 
 ### Communication in Distributed Systems 
 * Create an Authentication Service Using Remote Method Invocation (RMI) 
-    1. [Link to requirements](raw/master/CS715/RMI.pdf)
+    1. [Link to requirements](src/master/CS715/RMI.pdf)
     2. How to run: 
         + Start Server via: `rmi.engine.EventEngine.java`
         + Start Client via: `rmi.client.Client.java`
          
 ### Client Server Java model
 * Client and Server Socket classes 
-    1. [Link to requirements](raw/master/CS715/project2.pdf)
+    1. [Link to requirements](src/master/CS715/project2.pdf)
     2. How to run: 
         + Start Server via: `sockets.server.MainServer.java`
         + Start Client via: `sockets.client.HostClient.java`
