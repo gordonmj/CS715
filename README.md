@@ -3,7 +3,7 @@
 ## **Content** ##
 ### Synchronization in Distributed Systems 
 * Distributed Mutual Exclusion 
-    1. [Link to requirements](raw/master/CS715/project1.pdf)
+    1. [Link to requirements](https://bitbucket.org/rival95/cs715/src/master/CS715/project1.pdf)
     2. How to run: 
         + Start via: `project1.Main.java`
 
